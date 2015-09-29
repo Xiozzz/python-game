@@ -1,5 +1,4 @@
 # -*- coding:Utf-8 -*-
-'''simple jeu d'aventure'''
 
 #bibliothèques
 

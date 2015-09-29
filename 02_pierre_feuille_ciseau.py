@@ -44,9 +44,10 @@ def verification_jeu(choixJoueur, choixOrdinateur):
 
 def jeu():
 	print("************************\nPierre, Feuille, Ciseaux\n************************")
-	choixJoueur = choix_joueur()
-	choixOrdinateur = choix_ordinateur()
-	verification_jeu(choixJoueur, choixOrdinateur)
+	
+	joueur = choix_joueur()
+	ordinateur = choix_ordinateur()
+	verification_jeu(joueur, ordinateur)
 
 def menu():
 
