@@ -1,9 +1,10 @@
 # -*- coding:Utf-8 -*-
-# jeu du pendu
 
-# bibliothèques importées
+# bibliothèques
 
-import random, sys
+import random
+import sys
+
 
 # variables
 
