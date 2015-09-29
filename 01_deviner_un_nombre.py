@@ -1,6 +1,7 @@
 # -*- coding:Utf-8 -*-
 
-import random, sys
+import random
+import sys
 
 def choix_nombre():
     nb = random.randint(0, 101)
