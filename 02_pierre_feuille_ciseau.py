@@ -19,7 +19,7 @@ def choix_joueur():
 
 def choix_ordinateur():
 	choix = randint(0, 2)
-	print("L'ordinateur à choisi", CHOIX[choix])
+	print("L'ordinateur a choisi", CHOIX[choix])
 	return CHOIX[choix]
 
 def verification_jeu(choixJoueur, choixOrdinateur):
