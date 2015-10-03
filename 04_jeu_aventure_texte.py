@@ -2,7 +2,8 @@
 '''
 Un jeu d'aventure texte simple, exploration, interaction avec objets,
 -Les fonctionnalités que je souhaite ajouter :
--La possibilité de prendre un objet dans le monde
+-La possibilité de prendre un objet dans le monde - ok #il me reste à debugger, 
+le fait de ne pas recréer l'objet dans le monde si le joueur le possède déjà dans son inventaire. bug!!
 -La possibilité de regarder les objets du monde ou de l'inventaire - ok, commande regarder
 -La possibilité de regarder son inventaire, son status ou la carte du monde - ok, commande info
 -La possibilité d'interagir avec un objet
@@ -22,7 +23,7 @@ AIDE = '''
 Bienvenue dans ce jeu d'aventure !
 Vous pouvez intéragir avec les lieux et les objets à l'aide de commandes textuelles,
 Voici les différentes commandes possibles, il peut y avoir soit une commande seule ou 
-soit accompagné de son objet ou du lieu, mais les articles (un, le, les) ne fonctionnera pas.
+soit accompagnée d'un objet ou d'un lieu, mais les articles (un, le, les) ne fonctionneront pas.
 ex : 'aller chambre'
 ---
 # aller # -- pour déplacer le joueur en donnant le lieu où l'on souhaite se rendre
@@ -62,19 +63,19 @@ LIEUX ={
 "chambre" : {
 "nom" : "une chambre", 
 "description" : "Il s'agit d'une petite salle avec un lit sans draps, tout les meubles sont vides.",
-"choix_situation" : ["couloir"],
+"choix_lieu" : ["couloir"],
 "choix_objet" : ["porte", "couteau"]
 }, 
 "salon" : {
 "nom" : "un salon", 
 "description" : "Il s'agit d'une pièce avec une petite table, les murs frais ont été repeints il n'y a pas longtemps.",
-"choix_situation" : ["couloir"],
+"choix_lieu" : ["couloir"],
 "choix_objet" : ["porte", "tomate"]
 },
 "couloir" : {
 "nom" : "un couloir",
 "description" : "Il s'agit d'un couloir étroit, il y a deux portes, l'une allant vers la chambre, l'autre vers le salon.",
-"choix_situation" : ["chambre", "salon"],
+"choix_lieu" : ["chambre", "salon"],
 "choix_objet" : ["porte"]
 }
 }
@@ -112,6 +113,7 @@ class Joueur():
         self.score = 0
         self.pre_situation = ""
         self.nou_situation = ""
+        self.lx_possibles = []
     
         self.inventaire = []
         self.obj_possibles = []
@@ -128,18 +130,32 @@ class Joueur():
         self.pre_situation = self.nou_situation
         self.nou_situation = ns
 
+    def afficher_info(self):
+        os.system("cls")
+        print("Vous vous appelez :", self.nom)
+        print("Vous vous trouvez dans", self.nou_situation.nom)
+        print("Vous avez", self.score, "points sur", SCORE_MAX, ".")
+        if len(self.inventaire):
+            print("Vous avez dans votre inventaire :")
+            for i in self.inventaire:
+                print("-", i.nom)
+        else:
+            print("Vous n'avez rien dans votre inventaire.")
+        print("---\n")
+
 
 class Lieu():
     def __init__(self, dictl):
         self.nom = dictl["nom"]
         self.description = dictl["description"]
-        self.choix_situation = dictl["choix_situation"]
+        self.choix_lieu = dictl["choix_lieu"]
         self.choix_objet = dictl["choix_objet"]
 
 #fonctions
 
 
 def decoupage_commande(commande):
+    '''découpe l'action du joueur pour produire deux str séparées'''
     c = commande.split()
     c0, c1 = "", ""
     if len(c) == 1:
@@ -150,7 +166,7 @@ def decoupage_commande(commande):
         c1 = c[1]
         return c0, c1
     else:
-        print("ce n'est pas une commande valide.")
+        print("ce n'est pas une commande valide.\n")
         return c0, c1
 
 def verification_action(a):
@@ -159,25 +175,28 @@ def verification_action(a):
         return False
 
     else:
-        print("Erreur : ", a, "n'est pas une bonne commande")
+        print("Erreur :", a, "n'est pas une bonne commande.\n")
         return True
 
 def verification_objet(o, j):
-    if o in j.nou_situation.choix_situation or o in j.nou_situation.choix_objet:
+    if o in j.nou_situation.choix_lieu or o in j.nou_situation.choix_objet:
         #print("vous avez choisi l'objet ou le lieu", o, "OK") #debug
+        return False
+
+    elif o in j.nou_situation.nom.split():
         return False
 
     elif len(o) == 0:
         return False
     
     else:
-        print("Erreur :", o, "n'est pas un objet ou un lieu possible")
+        print("Erreur :", o, "n'est pas un objet ou un lieu possible.\n")
         return True
     
 def choix_action(joueur):
     verifa, verifo = True, True
     while verifa or verifo:
-        print("Que souhaitez vous faire ?")
+        print("Quelle est votre action ?")
         print("Tapez 'aide' si vous avez besoin d'informations sur le jeu.")
         commande = input(">>>").lower()
         action, objet = decoupage_commande(commande)
@@ -188,13 +207,23 @@ def choix_action(joueur):
 def redirection_commande(a, j):
     '''fonction centrale du jeu qui redirigine l'action du joueur vers la fonction correspondante'''
     #print('debug', a, j)
-    if a[0] == "aller" and a[1] in j.nou_situation.choix_situation:
-        l = Lieu(LIEUX[a[1]]) # une nouvelle instance lieu est créé
-        j.changement_situation(l) # et permet de mettre à jour la situation du joueur
+    if a[0] == "aller":
+        if a[1] in j.nou_situation.choix_lieu:
+            l = Lieu(LIEUX[a[1]]) # une nouvelle instance lieu est créé
+            j.changement_situation(l) # et permet de mettre à jour la situation du joueur
+
+        elif a[1] in j.nou_situation.nom.split():
+            print("Vous vous trouvez déjà dans", a[1], end=".\n\n")
+
+        elif a[1] == "":
+            print("Où souhaitez vous aller ?\n")
 
     elif a[0] == "regarder":
         if a [1] == "":
             afficher_situation(j)
+        
+        elif a[1] in j.nou_situation.nom.split():
+            print(j.nou_situation.description, '\n')
 
         for i in j.obj_possibles or i in j.inventaire:
             if i.nom.lower() == a[1]:
@@ -202,26 +231,29 @@ def redirection_commande(a, j):
                 print(i.description)
                 print("\n")
 
-    elif a[0] == "prendre":
-        pass
 
+    elif a[0] == "prendre":
+        if a[1] == "":
+            print("Que souhaitez vous prendre ?\n")
+
+        for i in j.obj_possibles:
+            #le nombre de points de l'objet permet de distinguer ce que l'on peut prendre ou pas 
+            if i.nom.lower() == a[1] and i.points > 0:
+                print("Vous ramassez", a[1], end=".\n\n")
+                j.ajout_inventaire(i)
+                #j.inventaire.append(i)
+                #j.score += i.points
+            elif  i.nom.lower() == a[1] and i.points == 0: 
+                print("Vous ne pouvez pas prendre", a[1], end=".\n\n")
+
+    
     elif a[0] == "quitter":
         os.system("cls")
         print("merci et au revoir !")
         sys.exit()
 
     elif a[0] == "info":
-        os.system("cls")
-        print("Vous vous appelez :", j.nom)
-        print("Vous vous trouvez dans :", j.nou_situation.nom)
-        print("Vous avez", j.score, "points sur", SCORE_MAX, ".")
-        if len(j.inventaire):
-            print("Vous avez dans votre inventaire :")
-            for i in j.inventaire:
-                print("-", i.nom)
-        else:
-            print("Vous n'avez rien dans votre inventaire.")
-        print("---\n")
+        j.afficher_info()
 
     elif a[0] == "aide":
         os.system("cls")
@@ -232,10 +264,10 @@ def redirection_commande(a, j):
 
 def afficher_situation(j):
     print("\n----")
-    print("Vous vous trouvez dans ", j.nou_situation.nom, ".")
+    print("Vous vous trouvez dans", j.nou_situation.nom, ".")
     print(j.nou_situation.description)
     for o in j.obj_possibles:
-        if o in j.inventaire or len(o.situation) < 1:
+        if len(o1.situation) < 1:
             pass
         else:
             print(o.situation)
@@ -243,11 +275,15 @@ def afficher_situation(j):
     print("----\n")
 
 
-def objets_possibles(j):
+def obj_lex_possibles(j):
     j.obj_possibles = []
+    j.lex_possibles = []
     for o in j.nou_situation.choix_objet:
         no = Objet(OBJETS[o])
         j.obj_possibles.append(no)
+    for l in j.nou_situation.choix_lieu:
+        nl = Lieu(LIEUX[l])
+        j.lex_possibles.append(nl)
 
 
 def nouvelle_partie():
@@ -267,7 +303,7 @@ def nouvelle_partie():
 
     # déroulement du jeu  
     while joueur.score < SCORE_MAX:
-        objets_possibles(joueur) #mise à jour du joueur et des objets avec lesquels il peut entrer en relation
+        obj_lex_possibles(joueur) #mise à jour du joueur et des objets et lieu avec lesquels il peut entrer en relation
         if joueur.pre_situation != joueur.nou_situation:
             afficher_situation(joueur)
             joueur.pre_situation = joueur.nou_situation
