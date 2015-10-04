@@ -2,12 +2,10 @@
 '''
 Un jeu d'aventure texte simple, exploration, interaction avec objets,
 -Les fonctionnalités que je souhaite ajouter :
--La possibilité de prendre un objet dans le monde - ok #il me reste à debugger, 
-le fait de ne pas recréer l'objet dans le monde si le joueur le possède déjà dans son inventaire. bug!!
+-La possibilité de prendre un objet dans le monde - ok, commande prendre
 -La possibilité de regarder les objets du monde ou de l'inventaire - ok, commande regarder
--La possibilité de regarder son inventaire, son status ou la carte du monde - ok, commande info
+-La possibilité de regarder son inventaire, son status ou la carte du monde - ok, commande info.
 -La possibilité d'interagir avec un objet
--La mise à jour de la carte du monde en fonction de son déplacement - pas pour ce jeu
 -La possibilité d'avoir de l'aide, pour connaître les commandes (+ introduction au départ) - ok, commande aide
 -Un système de score pour pouvoir finir le jeu (gagner des points en ramassant les objet et en les utilisant)
 '''
@@ -20,7 +18,9 @@ import sys, os
 # données
 
 AIDE = '''
+=============AIDE=================
 Bienvenue dans ce jeu d'aventure !
+==================================
 Vous pouvez intéragir avec les lieux et les objets à l'aide de commandes textuelles,
 Voici les différentes commandes possibles, il peut y avoir soit une commande seule ou 
 soit accompagnée d'un objet ou d'un lieu, mais les articles (un, le, les) ne fonctionneront pas.
@@ -62,13 +62,15 @@ OBJETS = {
 LIEUX ={
 "chambre" : {
 "nom" : "une chambre", 
-"description" : "Il s'agit d'une petite salle avec un lit sans draps, tout les meubles sont vides.",
+"description" : "Il s'agit d'une petite salle avec un lit sans draps, tous les meubles sont vides,\
+ une porte ouvre sur un couloir.",
 "choix_lieu" : ["couloir"],
 "choix_objet" : ["porte", "couteau"]
 }, 
 "salon" : {
 "nom" : "un salon", 
-"description" : "Il s'agit d'une pièce avec une petite table, les murs frais ont été repeints il n'y a pas longtemps.",
+"description" : "Il s'agit d'une pièce avec une petite table, les murs frais ont été repeints il n'y a pas longtemps,\
+ une porte ouvre sur un couloir.",
 "choix_lieu" : ["couloir"],
 "choix_objet" : ["porte", "tomate"]
 },
@@ -106,10 +108,18 @@ class Objet():
         self.situation = dicto["situation"]
         self.points = dicto["points"]
 
+
+class Lieu():
+    def __init__(self, dictl):
+        self.nom = dictl["nom"]
+        self.description = dictl["description"]
+        self.choix_lieu = dictl["choix_lieu"]
+        self.choix_objet = dictl["choix_objet"]
+
+
 class Joueur():
     def __init__(self):
- ##       self.nom = input("Quel est votre nom ?")
-        self.nom = "Charlie Tango" ## debug
+        self.nom = input("Quel est votre nom ?")
         self.score = 0
         self.pre_situation = ""
         self.nou_situation = ""
@@ -118,13 +128,18 @@ class Joueur():
         self.inventaire = []
         self.obj_possibles = []
 
-    def ajout_inventaire(self, objet):
-        self.inventaire.append(objet)
-        self.score += objet.points
+    def ajout_inventaire(self, o):
+        self.objet = Objet(OBJETS[o])
+        self.inventaire.append(self.objet)
+        self.score += self.objet.points
 
     def control_inventaire(self):
-        for i in self.inventaire:
-            print(i)
+        if len(self.inventaire):
+            print("Vous avez dans votre inventaire :")
+            for i in self.inventaire:
+                print("-", i.nom)
+        else:
+            print("Vous n'avez rien dans votre inventaire.")
 
     def changement_situation(self, ns):
         self.pre_situation = self.nou_situation
@@ -132,24 +147,14 @@ class Joueur():
 
     def afficher_info(self):
         os.system("cls")
+        print("======INFO-JOUEUR=========================")
         print("Vous vous appelez :", self.nom)
         print("Vous vous trouvez dans", self.nou_situation.nom)
         print("Vous avez", self.score, "points sur", SCORE_MAX, ".")
-        if len(self.inventaire):
-            print("Vous avez dans votre inventaire :")
-            for i in self.inventaire:
-                print("-", i.nom)
-        else:
-            print("Vous n'avez rien dans votre inventaire.")
-        print("---\n")
+        print("---")
+        self.control_inventaire()
+        print("==========================================\n")
 
-
-class Lieu():
-    def __init__(self, dictl):
-        self.nom = dictl["nom"]
-        self.description = dictl["description"]
-        self.choix_lieu = dictl["choix_lieu"]
-        self.choix_objet = dictl["choix_objet"]
 
 #fonctions
 
@@ -171,7 +176,6 @@ def decoupage_commande(commande):
 
 def verification_action(a):
     if a in ACTIONS:
-        #print("vous avez choisi l'action", a, "OK") #debug
         return False
 
     else:
@@ -179,8 +183,11 @@ def verification_action(a):
         return True
 
 def verification_objet(o, j):
-    if o in j.nou_situation.choix_lieu or o in j.nou_situation.choix_objet:
-        #print("vous avez choisi l'objet ou le lieu", o, "OK") #debug
+    for i in j.inventaire:
+        if o == i.nom.lower():
+            return False
+
+    if o in j.nou_situation.choix_lieu or o in j.obj_possibles:
         return False
 
     elif o in j.nou_situation.nom.split():
@@ -206,7 +213,6 @@ def choix_action(joueur):
 
 def redirection_commande(a, j):
     '''fonction centrale du jeu qui redirigine l'action du joueur vers la fonction correspondante'''
-    #print('debug', a, j)
     if a[0] == "aller":
         if a[1] in j.nou_situation.choix_lieu:
             l = Lieu(LIEUX[a[1]]) # une nouvelle instance lieu est créé
@@ -225,26 +231,29 @@ def redirection_commande(a, j):
         elif a[1] in j.nou_situation.nom.split():
             print(j.nou_situation.description, '\n')
 
-        for i in j.obj_possibles or i in j.inventaire:
-            if i.nom.lower() == a[1]:
-                print("\n")
+        elif a[1] in j.obj_possibles:
+            print(OBJETS[a[1]]['description'])
+
+        for i in j.inventaire:
+            if a[1] == i.nom.lower():
+                print("Vous sortez l'objet de votre inventaire pour l'observer :")
                 print(i.description)
-                print("\n")
 
 
     elif a[0] == "prendre":
-        if a[1] == "":
-            print("Que souhaitez vous prendre ?\n")
-
         for i in j.obj_possibles:
+            obj = OBJETS[i]
+
             #le nombre de points de l'objet permet de distinguer ce que l'on peut prendre ou pas 
-            if i.nom.lower() == a[1] and i.points > 0:
+            if i == a[1] and obj['points'] > 0:
                 print("Vous ramassez", a[1], end=".\n\n")
-                j.ajout_inventaire(i)
-                #j.inventaire.append(i)
-                #j.score += i.points
-            elif  i.nom.lower() == a[1] and i.points == 0: 
+                j.ajout_inventaire(a[1])
+
+            elif  i == a[1] and obj['points'] == 0: 
                 print("Vous ne pouvez pas prendre", a[1], end=".\n\n")
+
+            elif a[1] == '':
+                print("Que souhaitez vous prendre ?\n")
 
     
     elif a[0] == "quitter":
@@ -262,29 +271,35 @@ def redirection_commande(a, j):
     elif a[0] == "carte":
         print(PLAN)
 
+
 def afficher_situation(j):
-    print("\n----")
-    print("Vous vous trouvez dans", j.nou_situation.nom, ".")
+    print('============--SITUATION--============')
+    print("Vous vous trouvez dans", j.nou_situation.nom, end='.\n')
     print(j.nou_situation.description)
     for o in j.obj_possibles:
-        if len(o1.situation) < 1:
-            pass
-        else:
-            print(o.situation)
+        if OBJETS[o]["points"] > 0:
+            print(OBJETS[o]["situation"])
+    print('=====================================')
 
-    print("----\n")
-
+        
 
 def obj_lex_possibles(j):
     j.obj_possibles = []
     j.lex_possibles = []
     for o in j.nou_situation.choix_objet:
-        no = Objet(OBJETS[o])
-        j.obj_possibles.append(no)
-    for l in j.nou_situation.choix_lieu:
-        nl = Lieu(LIEUX[l])
-        j.lex_possibles.append(nl)
+        #print(o)
+        j.obj_possibles.append(o)
+        #print('flag 1')
+    
+        for i in j.inventaire:
+            #print(i, i.nom, i.nom.lower())
+            if o == i.nom.lower():
+                j.obj_possibles.remove(o)
+                #print("flag 0")
 
+    #print("inventaire :", j.inventaire, 'objets possibles :', j.obj_possibles)
+    for l in j.nou_situation.choix_lieu:
+        j.lex_possibles.append(l)
 
 def nouvelle_partie():
 
@@ -295,9 +310,9 @@ def nouvelle_partie():
     joueur.pre_situation = Lieu(LIEUX["salon"])
     joueur.nou_situation = Lieu(LIEUX["couloir"])
 
-##    print("Bonjour %s \nC'est parti !" % joueur.nom)
-##    print(AIDE)
-##    time.sleep(1)
+    print("Bonjour %s \nC'est parti !" % joueur.nom)
+    print(AIDE)
+    time.sleep(1)
 
     print(PLAN)
 
@@ -305,9 +320,9 @@ def nouvelle_partie():
     while joueur.score < SCORE_MAX:
         obj_lex_possibles(joueur) #mise à jour du joueur et des objets et lieu avec lesquels il peut entrer en relation
         if joueur.pre_situation != joueur.nou_situation:
-            afficher_situation(joueur)
-            joueur.pre_situation = joueur.nou_situation
-        action = choix_action(joueur)
+            afficher_situation(joueur) #affiche la situation du joueur
+            joueur.pre_situation = joueur.nou_situation # un transfert de situation si la situation à changé
+        action = choix_action(joueur) 
         redirection_commande(action, joueur)
 
     print('Victoire !')
