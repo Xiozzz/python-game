@@ -7,6 +7,8 @@ deux variantes :
 celui qui prend le dernier baton à perdu.
 '''
 
+#https://www.youtube.com/watch?v=NqsZ8DD6WHU
+
 BATON = ('''
   _ 
  | | 
