@@ -8,9 +8,10 @@ Fonctionalités :
 -lire un journal des quêtes
 -possibilité de combats, d'expérience (voir score du jeu précédent)
 -le choix de son arme, de sa race (nain, elfe, homme), de sa classe (guerrier, voleur, magicien)
--la possibilité de lancer des sort magique (diminution point de magie)
+-la possibilité de lancer des sorts magiques (diminution point de magie)
 -système de combat, de dégats, de points de vie, de potion de soin et potion de magie
--la possibilité de sauvegarder et reprendre la partie (open, read on file)
+-la possibilité de sauvegarder et reprendre la partie (open, read on file) à partir de données enregistrées d'une partie précédente
+-ennemis, pnj, carte plus grande, trésors, porte fermés, clés
 '''
 
 # bibliothèques
