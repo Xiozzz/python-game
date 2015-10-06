@@ -26,17 +26,17 @@ Voici les différentes commandes possibles, il peut y avoir soit une commande se
 soit accompagnée d'un objet ou d'un lieu, mais les articles (un, le, les) ne fonctionneront pas.
 ex : 'aller chambre'
 ---
-# aller # -- pour déplacer le joueur en donnant le lieu où l'on souhaite se rendre
-# regarder # -- pour avoir une description plus détaillé de ce que vous souhaitez observer
-# prendre # -- pour ajouter à son inventaire un objet présent dans l'environnement immédiat
-# utiliser # -- pour interagir avec les objets de l'inventaire
-# carte # -- permet d'afficher le monde et sa position dans celui-ci
-# info # -- pour en savoir plus sur les statistiques du Joueur
-# aide # -- pour voir cet aide décrivant les différentes commandes
+# aller # -- pour déplacer le joueur vers le lieu où l'on souhaite se rendre
+# regarder # -- pour avoir une description de ce que vous souhaitez observer
+# prendre # -- pour ajouter à son inventaire un objet.
+# utiliser # -- pour interagir avec les objets.
+# carte # -- permet d'afficher le monde.
+# info # -- pour en savoir plus sur le joueur.
+# aide # -- pour voir cet aide décrivant les différentes commandes.
 ---
 '''
 
-SCORE_MAX = 10
+SCORE_MAX = 8
 
 OBJETS = {
 "couteau" : {
@@ -150,7 +150,7 @@ class Joueur():
         print("======INFO-JOUEUR=========================")
         print("Vous vous appelez :", self.nom)
         print("Vous vous trouvez dans", self.nou_situation.nom)
-        print("Vous avez", self.score, "points sur", SCORE_MAX, ".")
+        print("Vous avez", self.score, "points sur", SCORE_MAX, end=".\n")
         print("---")
         self.control_inventaire()
         print("==========================================\n")
@@ -203,6 +203,7 @@ def verification_objet(o, j):
 def choix_action(joueur):
     verifa, verifo = True, True
     while verifa or verifo:
+        print("\n==========ACTION=========")
         print("Quelle est votre action ?")
         print("Tapez 'aide' si vous avez besoin d'informations sur le jeu.")
         commande = input(">>>").lower()
@@ -211,50 +212,95 @@ def choix_action(joueur):
         verifo = verification_objet(objet, joueur)
     return action, objet
 
+def utiliser_objet(j, o):
+    '''vérifie si l'objet peut être utilisé avec un autre objet et si oui, supprime les objets et ajoute les points de chaque objets'''
+    objet = input('>>>')
+    avertissement = "\n- Vous ne pouvez pas utiliser cet objet avec lui-même."
+    if not verification_objet(objet, j):
+        for i in j.inventaire:
+            if i.nom.lower() == objet and o == objet:
+                print(avertissement)
+
+            if i.nom.lower() == objet and o != objet:
+                print("\n- Vous utilisez", o, "avec", objet, end=".\n")
+                j.score += 4
+
+        for i in j.obj_possibles:
+            if i == objet and o == objet:
+                print(avertissement)
+
+            if i == objet and o != objet:
+                print("\n- Vous utilisez", o, "avec", objet, end=".\n")
+                j.score += 6
+
 def redirection_commande(a, j):
     '''fonction centrale du jeu qui redirigine l'action du joueur vers la fonction correspondante'''
     if a[0] == "aller":
         if a[1] in j.nou_situation.choix_lieu:
             l = Lieu(LIEUX[a[1]]) # une nouvelle instance lieu est créé
+            print("\n- Vous ouvrez la porte et entrez dans", l.nom, end=".\n")
+            time.sleep(1)
             j.changement_situation(l) # et permet de mettre à jour la situation du joueur
 
         elif a[1] in j.nou_situation.nom.split():
-            print("Vous vous trouvez déjà dans", a[1], end=".\n\n")
+            print("\n- Vous vous trouvez déjà dans", a[1], end=".\n")
 
         elif a[1] == "":
-            print("Où souhaitez vous aller ?\n")
+            print("\n- Où souhaitez vous aller ?")
 
     elif a[0] == "regarder":
         if a [1] == "":
             afficher_situation(j)
         
         elif a[1] in j.nou_situation.nom.split():
-            print(j.nou_situation.description, '\n')
+            print('\n-', j.nou_situation.description)
 
         elif a[1] in j.obj_possibles:
-            print(OBJETS[a[1]]['description'])
+            print('\n-', OBJETS[a[1]]['description'])
 
         for i in j.inventaire:
             if a[1] == i.nom.lower():
-                print("Vous sortez l'objet de votre inventaire pour l'observer :")
+                print("\n- Vous sortez l'objet de votre inventaire pour l'observer :")
                 print(i.description)
 
-
     elif a[0] == "prendre":
+
+        for i in j.inventaire:
+            if i.nom.lower() == a[1]:
+                print("\n- Vous avez déjà", a[1], "dans votre inventaire.")
+
         for i in j.obj_possibles:
             obj = OBJETS[i]
 
             #le nombre de points de l'objet permet de distinguer ce que l'on peut prendre ou pas 
             if i == a[1] and obj['points'] > 0:
-                print("Vous ramassez", a[1], end=".\n\n")
+                print("\n- Vous ramassez", a[1], end=".\n")
                 j.ajout_inventaire(a[1])
 
             elif  i == a[1] and obj['points'] == 0: 
-                print("Vous ne pouvez pas prendre", a[1], end=".\n\n")
+                print("\n- Vous ne pouvez pas prendre", a[1], end=".\n")
 
-            elif a[1] == '':
-                print("Que souhaitez vous prendre ?\n")
+        if a[1] == '':
+            print("\n- Que souhaitez vous prendre ?")
 
+    elif a[0] == "utiliser":
+
+        if a[1] == "":
+            print("\n- Que souhaitez-vous utiliser ?")
+
+        for i in j.inventaire:
+            if i.nom.lower() == a[1] :
+                print("\n- Avec quoi souhaitez vous utiliser", a[1], "?")
+                utiliser_objet(j, a[1])
+
+        for o in j.obj_possibles:
+            obj = OBJETS[o]
+            if o == a[1] and obj['points'] > 0:
+                print("\n- Avec quoi souhaitez vous utiliser", a[1], "?")
+                utiliser_objet(j, a[1])
+
+            elif o == a[1] and obj['points'] == 0:
+                print("\n- Il n'est pas possible d'utiliser", a[1], end=".\n")
     
     elif a[0] == "quitter":
         os.system("cls")
@@ -273,13 +319,13 @@ def redirection_commande(a, j):
 
 
 def afficher_situation(j):
-    print('============--SITUATION--============')
+    os.system("cls")
+    print('============SITUATION============')
     print("Vous vous trouvez dans", j.nou_situation.nom, end='.\n')
     print(j.nou_situation.description)
     for o in j.obj_possibles:
         if OBJETS[o]["points"] > 0:
             print(OBJETS[o]["situation"])
-    print('=====================================')
 
         
 
@@ -311,10 +357,8 @@ def nouvelle_partie():
     joueur.nou_situation = Lieu(LIEUX["couloir"])
 
     print("Bonjour %s \nC'est parti !" % joueur.nom)
-    print(AIDE)
     time.sleep(1)
 
-    print(PLAN)
 
     # déroulement du jeu  
     while joueur.score < SCORE_MAX:
@@ -325,11 +369,14 @@ def nouvelle_partie():
         action = choix_action(joueur) 
         redirection_commande(action, joueur)
 
-    print('Victoire !')
+    print('\n!')
+    print('\nVictoire, vous avez mangé un bonne tomate sans vous en mettre partout ! :)\n')
+    print('!\n')
 
 def menu():
     #print("\n"*50)
     os.system("cls")
+    print(PLAN)
     print("\n===============\nJeux d'aventure\n===============")
     nouvelle_partie()
 
