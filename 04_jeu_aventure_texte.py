@@ -4,10 +4,10 @@ Un jeu d'aventure texte simple, exploration, interaction avec objets,
 -Les fonctionnalités que je souhaite ajouter :
 -La possibilité de prendre un objet dans le monde - ok, commande prendre
 -La possibilité de regarder les objets du monde ou de l'inventaire - ok, commande regarder
--La possibilité de regarder son inventaire, son status ou la carte du monde - ok, commande info.
--La possibilité d'interagir avec un objet
+-La possibilité de regarder son inventaire, son status ou la carte du monde - ok, commande info
+-La possibilité d'interagir avec un objet - ok, commande utiliser
 -La possibilité d'avoir de l'aide, pour connaître les commandes (+ introduction au départ) - ok, commande aide
--Un système de score pour pouvoir finir le jeu (gagner des points en ramassant les objet et en les utilisant)
+-Un système de score pour pouvoir finir le jeu (gagner des points en ramassant les objet et en les utilisant) - ok
 '''
 #bibliothèques
 
