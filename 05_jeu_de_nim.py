@@ -17,9 +17,9 @@ PYRAMIDE = {"1" : 1, "2" : 3, "3" : 5, "4" : 7}
 
 AIDE = {
 "Ligne" : "Dans cette variante sur une seule ligne de baton, le gagnant est celui qui\
- prend le dernier baton, celui qui est le dernier à jouer en retirant ce baton, gagne.",
-"Pyramide" : "Dans cette variante sur cinqs lignes de batons de quantités différentes (1, 3, 5, 7),\
- on prend sur une ligne autant de baton que l'on souhaite celui qui prend le dernier baton à gagné."
+ prend le dernier baton.\nCelui qui est le dernier à jouer en retirant ce baton, gagne.",
+"Pyramide" : "Dans cette variante sur cinqs lignes de batons de quantités différentes (1, 3, 5, 7).\
+ \nOn prend sur une ligne autant de baton que l'on souhaite celui qui prend le dernier baton à gagné."
  }
 
 class Ligne():
@@ -85,7 +85,6 @@ class Ligne():
 
 	def baton_update(self, nb):
 		self.nbBaton -= int(nb)
-		#print(self.nbBaton)
 
 	def verif_victoire(self, nb, choix, turn):
 		if turn == 1 and self.nbBaton <= 0:
@@ -108,13 +107,117 @@ class Ligne():
 class Pyramide():
 	'''Variante 2, jeu de nim sur une pyramide'''
 
-	def _init_(self):
-		print("pyramide!!")
-		pass
+	def __init__(self):
+		self.nbBaton = PYRAMIDE
 
 	def boucle(self):
+		os.system('cls')
 		print(TITRE, '\n')
-		print(AIDE["Pyramide"])
+		print(AIDE["Pyramide"], '\n')
+		input("Appuyez sur <<Entrée>> pour commencer.")
+		while True:
+			print('Debug 1, pyramide', self.nbBaton)
+			#mise à jour écran
+			time.sleep(2)
+			os.system('cls')
+			self.afficher_baton()
+
+			#tour du joueur
+			self.turn = 1
+			self.chxJoueur = self.choix_joueur()
+			print("Debug 2, chxJoueur:", self.chxJoueur)
+			self.update_baton(self.chxJoueur)
+			self.v = self.verif_victoire(self.turn)
+			if self.v:
+				break
+
+			#mise à jour écran
+			time.sleep(2)
+			os.system('cls')
+			self.afficher_baton()
+
+			#tour de l'ordinateur
+			self.turn = 0
+			self.chxOrdi = self.choix_ordi()
+			print("Debug 3, chxOrdi:", self.chxOrdi)
+			self.update_baton(self.chxOrdi)
+			self.v = self.verif_victoire(self.turn)
+			if self.v:
+				break
+
+
+	def choix_joueur(self):
+		print("\n=====À votre tour====")
+		self.ligne = input("\nDans quelle ligne souhaitez vous prendre des batons ?\n>>>")
+		
+		while True:
+
+			if self.nbBaton[self.ligne] <= 0:
+				print("Il n'y a plus de baton à la ligne", self.ligne, end='.\n')
+				self.ligne = input("Choisissez de nouveau une ligne.\n>>>")
+
+			else:
+				self.baton = self.verif_baton(self.ligne)
+				return [self.ligne, self.baton]
+
+
+	def choix_ordi(self):
+		print("\n=====Tour de l'ordinateur====")
+		print("\nL'ordi qui n'a pas été programmé retire toujours 1 baton à la ligne 4.\n")
+		return ["4", 1]
+
+	def verif_baton(self, ligne):
+		'''vérifie si il reste suffisamment de baton pour répondre à la demande du joueur'''
+		
+		self.bMax = self.nbBaton[ligne]
+		print("Il reste", self.bMax, "baton(s) sur la ligne", ligne)
+		print("Combien de baton souhaitez vous retirer de la ligne", ligne, "?")
+		
+		while True:
+			self.b = self.verif_nb()
+
+			if self.b <= 0 and self.bMax == 1:
+				print("Vous ne pouvez prendre qu'un seul baton.")
+
+			elif self.b <= 0 and self.bMax != 1:
+				print("Il faut que vous preniez entre 1 et", self.bMax, "batons.")
+
+			elif self.b > self.bMax:
+				print("Vous ne pouvez pas prendre plus que", self.bMax, "batons.")
+
+			elif self.b <= self.bMax:
+				print("Vous retirez", self.b, "batons de la ligne", ligne)
+				return self.b
+
+
+	def verif_nb(self):
+
+		while True:
+			self.nb = input(">>>")
+			if self.nb in list("1234567890"):
+				self.nb = int(self.nb)
+				return self.nb
+
+			else:
+				print("Vous devez entrer une valeur numérique entre 1 et 9.")
+
+	def verif_victoire(self, turn):
+		pass
+
+	def update_baton(self, chx):
+		ligne = chx[0]
+		baton = chx[1]
+		self.nbBaton[ligne] -= baton
+
+	def afficher_baton(self):
+		x = 1
+		while x < 5:
+			print("\nLigne", x, ":")
+			print(BATON['a'] * self.nbBaton[str(x)])
+			print(BATON['b'] * self.nbBaton[str(x)])
+			print(BATON['b'] * self.nbBaton[str(x)])
+			print(BATON['c'] * self.nbBaton[str(x)])
+			x += 1
 
 
 def menu():
