@@ -1,7 +1,6 @@
 # -*- coding:Utf-8 -*-
 # Le jeu de nim : https://fr.wikipedia.org/wiki/Jeux_de_Nim
 
-
 import random
 import sys
 import os
@@ -11,14 +10,14 @@ TITRE = "=============\nLe jeu de Nim\n============="
 
 BATON = {'a' : ' _  ', 'b' : '|x| ', 'c' : '|_| '}
 
-NOMBRE = 20
+NOMBRE = 13
 
 PYRAMIDE = {"1" : 1, "2" : 3, "3" : 5, "4" : 7}
 
 AIDE = {
 "Ligne" : "Dans cette variante sur une seule ligne de baton, le gagnant est celui qui\
  prend le dernier baton.\nCelui qui est le dernier à jouer en retirant ce baton, gagne.",
-"Pyramide" : "Dans cette variante sur cinqs lignes de batons de quantités différentes (1, 3, 5, 7).\
+"Pyramide" : "Dans cette variante sur cinqs lignes de batons de quantités différentes (1, 3, 5 et 7).\
  \nOn prend sur une ligne autant de baton que l'on souhaite celui qui prend le dernier baton à gagné."
  }
 
@@ -29,12 +28,14 @@ class Ligne():
 		self.nbBaton = NOMBRE
 
 	def afficher_baton(self, nb):
+		"affiche le baton par le nombre de fois nb"
 		print(BATON['a'] * nb)
 		print(BATON['b'] * nb)
 		print(BATON['b'] * nb)
 		print(BATON['c'] * nb)
 
 	def boucle(self):
+		"boucle principale du jeu"
 
 		os.system('cls')
 		print(TITRE, '\n')
@@ -81,10 +82,22 @@ class Ligne():
 		print("------\nTour de l'ordinateur :\n------")
 		time.sleep(1)
 		self.nb = random.randint(1, 3)
+		self.dernier = self.verif_ligne()
+		if self.dernier:
+			return self.dernier
 		return self.nb
 
 	def baton_update(self, nb):
 		self.nbBaton -= int(nb)
+
+	def verif_ligne(self):
+		"vérifie s'il y a 3 batons, et en retire suffisamment pour gagner"
+		if self.nbBaton == 3:
+			return 3
+		elif self.nbBaton == 2:
+			return 2
+		else:
+			return 0
 
 	def verif_victoire(self, nb, choix, turn):
 		if turn == 1 and self.nbBaton <= 0:
@@ -108,15 +121,18 @@ class Pyramide():
 	'''Variante 2, jeu de nim sur une pyramide'''
 
 	def __init__(self):
-		self.nbBaton = PYRAMIDE
+		self.nbBaton = PYRAMIDE.copy()
 
 	def boucle(self):
+		"boucle principale du jeu"
+
 		os.system('cls')
 		print(TITRE, '\n')
 		print(AIDE["Pyramide"], '\n')
 		input("Appuyez sur <<Entrée>> pour commencer.")
+
 		while True:
-			print('Debug 1, pyramide', self.nbBaton)
+
 			#mise à jour écran
 			time.sleep(2)
 			os.system('cls')
@@ -125,7 +141,6 @@ class Pyramide():
 			#tour du joueur
 			self.turn = 1
 			self.chxJoueur = self.choix_joueur()
-			print("Debug 2, chxJoueur:", self.chxJoueur)
 			self.update_baton(self.chxJoueur)
 			self.v = self.verif_victoire(self.turn)
 			if self.v:
@@ -139,7 +154,6 @@ class Pyramide():
 			#tour de l'ordinateur
 			self.turn = 0
 			self.chxOrdi = self.choix_ordi()
-			print("Debug 3, chxOrdi:", self.chxOrdi)
 			self.update_baton(self.chxOrdi)
 			self.v = self.verif_victoire(self.turn)
 			if self.v:
@@ -147,9 +161,11 @@ class Pyramide():
 
 
 	def choix_joueur(self):
+		"le joueur choisi une colonne et un baton"
 		print("\n=====À votre tour====")
-		self.ligne = input("\nDans quelle ligne souhaitez vous prendre des batons ?\n>>>")
-		
+		print("\nDans quelle ligne souhaitez vous prendre des batons ?")
+		self.ligne = self.verif_nb("ligne")
+
 		while True:
 
 			if self.nbBaton[self.ligne] <= 0:
@@ -162,22 +178,52 @@ class Pyramide():
 
 
 	def choix_ordi(self):
+		"prend aléatoirement un baton dans une des ligne disponible"
 		print("\n=====Tour de l'ordinateur====")
-		print("\nL'ordi qui n'a pas été programmé retire toujours 1 baton à la ligne 4.\n")
-		return ["4", 1]
+		self.ligne = str(random.randint(1, 4))
+		self.dernierJeu = self.verif_lignes() 
+
+		while True:
+
+			if self.dernierJeu: #voir fonction self.verif_lignes()
+				return [self.dernLigne, self.nbBaton[self.dernLigne]]
+
+			elif self.nbBaton[self.ligne] <= 0:
+				self.ligne = str(random.randint(1, 4))
+
+			else:
+				self.baton = random.randint(1, self.nbBaton[self.ligne])
+				print("\nL'ordinateur retire", self.baton, "baton(s) de la ligne", self.ligne, end='.\n')
+				return [self.ligne, self.baton]
+
+	def verif_lignes(self):
+		"cette fonction retourne la ligne s'il ne reste qu'une seule ligne"
+		self.resteUneLigne = 0
+		self.dernLigne = ""
+
+		for i in self.nbBaton:
+			if self.nbBaton[i] > 0:
+				self.resteUneLigne += 1
+				self.dernLigne = i
+
+		if self.resteUneLigne == 1:
+			return 1
+
+		else:
+			return 0
 
 	def verif_baton(self, ligne):
-		'''vérifie si il reste suffisamment de baton pour répondre à la demande du joueur'''
+		"vérifie si il reste suffisamment de baton pour répondre à la demande du joueur"
 		
 		self.bMax = self.nbBaton[ligne]
 		print("Il reste", self.bMax, "baton(s) sur la ligne", ligne)
 		print("Combien de baton souhaitez vous retirer de la ligne", ligne, "?")
 		
 		while True:
-			self.b = self.verif_nb()
+			self.b = self.verif_nb('baton')
 
 			if self.b <= 0 and self.bMax == 1:
-				print("Vous ne pouvez prendre qu'un seul baton.")
+				print("Vous devez retirer le dernier baton.")
 
 			elif self.b <= 0 and self.bMax != 1:
 				print("Il faut que vous preniez entre 1 et", self.bMax, "batons.")
@@ -190,26 +236,60 @@ class Pyramide():
 				return self.b
 
 
-	def verif_nb(self):
-
+	def verif_nb(self, ch):
+		"vérifie si l'input est bien numérique"
 		while True:
-			self.nb = input(">>>")
-			if self.nb in list("1234567890"):
-				self.nb = int(self.nb)
-				return self.nb
+			
+			if ch == "baton":
+				self.nb = input(">>> ") 
 
-			else:
-				print("Vous devez entrer une valeur numérique entre 1 et 9.")
+				if self.nb in list("1234567890"):
+					self.nb = int(self.nb)
+					return self.nb
+
+				else:
+					print("Vous devez entrer une valeur numérique entre 1 et 9.")
+
+			if ch == "ligne":
+				self.nb = input(">>> ")
+
+				if self.nb in list("1234"):
+					return self.nb
+
+				else:
+					print("Vous devez entrer une valeur numérique entre 1 et 4.")
+
+
 
 	def verif_victoire(self, turn):
-		pass
+		"vérifie s'il reste des batons dans la pyramide et si non, annonce le vainceur"
+		self.end = 0
+
+		for i in self.nbBaton:
+			if self.nbBaton[i] > 0:
+				self.end += 1
+
+		if self.end == 0 and turn == 0:
+			print("L'ordinateur à retiré le dernier baton, vous avez perdu ! :(")
+			input()
+			return True
+
+		elif self.end == 0 and turn == 1:
+			print("Vous avez retiré le dernier baton, vous avez gagné ! :)")
+			input()
+			return True
+
+		else:
+			return False
 
 	def update_baton(self, chx):
+		"mise à jour du nombre de batons"
 		ligne = chx[0]
 		baton = chx[1]
 		self.nbBaton[ligne] -= baton
 
 	def afficher_baton(self):
+		"affichage du tableau de jeu"
 		x = 1
 		while x < 5:
 			print("\nLigne", x, ":")
@@ -223,11 +303,12 @@ class Pyramide():
 def menu():
 	while True:
 		os.system('cls')
-		print("Jeu de Nim")
+		print(TITRE, '\n')
 		print("Quelle variante du jeu de nim souhaitez vous jouer ?")
 		print("1) Batons en ligne")
 		print("2) Batons en pyramide")
-		answer = input(">>>")
+		print("q) Quitter")
+		answer = input("\n>>> ")
 		
 		while answer != "1" and answer != "2" and answer != "q":
 			answer = input("Variante 1 ou 2 ?")
@@ -242,10 +323,8 @@ def menu():
 
 		else:
 			print("Bye")
-			os.exit()
+			sys.exit()
 
 
 if __name__ == "__main__":
-	#menu()
-	jeu = Pyramide()
-	jeu.boucle()
+	menu()
