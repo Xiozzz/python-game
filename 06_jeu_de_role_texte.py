@@ -10,8 +10,12 @@ Fonctionalités :
 -le choix de son arme, de sa race (nain, elfe, homme), de sa classe (guerrier, voleur, magicien)
 -la possibilité de lancer des sorts magiques (diminution point de magie)
 -système de combat, de dégats, de points de vie, de potion de soin et potion de magie
--la possibilité de sauvegarder et reprendre la partie (open, read on file) à partir de données enregistrées d'une partie précédente
+-la possibilité de sauvegarder et reprendre la partie (open, read on file) à partir de données enregistrées 
+d'une partie précédente dans un fichier
 -ennemis, pnj, carte plus grande, trésors, porte fermés, clés
+- la carte du monde et la position du joueur sur la carte
+- créer un programme éditeur qui permet de rajouter des données avec une interface tkinter 
+(ajouter une arme, un lieu, un objet, un npc)
 '''
 
 # bibliothèques
@@ -22,4 +26,4 @@ Fonctionalités :
 
 # programme
 
-
+#Ce fichier ne fait qu'importer le fichier game et lancer le jeu
