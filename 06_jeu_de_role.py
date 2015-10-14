@@ -3,6 +3,7 @@
 '''
 En gros, un jeu d'aventure avec du combat, l'inspiration des muds
 Fonctionalités :
+-Une interface graphique tkinter ?? 
 -Je reprends le jeu d'aventure précédent et j'ajoute les NPCs
 -possibilité de discussion et de recevoir des quêtes
 -lire un journal des quêtes
@@ -14,11 +15,13 @@ Fonctionalités :
 d'une partie précédente dans un fichier
 -ennemis, pnj, carte plus grande, trésors, porte fermés, clés
 - la carte du monde et la position du joueur sur la carte
-- créer un programme éditeur qui permet de rajouter des données avec une interface tkinter 
+- créer un programme éditeur qui permet de rajouter des données
 (ajouter une arme, un lieu, un objet, un npc)
 '''
 
 # bibliothèques
+
+from src_jeu_de_role import display
 
 # variables
 
@@ -26,4 +29,8 @@ d'une partie précédente dans un fichier
 
 # programme
 
-#Ce fichier ne fait qu'importer le fichier game et lancer le jeu
+"Ce fichier ne fait qu'importer la bibliothèque display et lancer le jeu"
+
+if __name__ == "__main__":
+	menu = display.Programme()
+	menu.boucle()
