@@ -16,7 +16,8 @@ from src_jeu_de_role import game
 TITRE = "Jeu de rôle"
 Introduction = "Bonjour et bienvenu dans ce nouveau jeu de rôle !"
 
-WIDTH, HEIGHT = 400, 50
+WIDTH, HEIGHT = 800, 400 #window size
+CW, CH = 400, 50 #canvas size
 
 MENU = [
 "Que souhaitez vous faire ?",  
@@ -34,10 +35,10 @@ class Programme():
 	def __init__(self):
 		self.fenetre = Tk()
 		
-		self.canvas1 = Canvas(self.fenetre, width=WIDTH, height=HEIGHT)
-		self.canvas2 = Canvas(self.fenetre, width=WIDTH, height=HEIGHT)
-		self.canvas3 = Canvas(self.fenetre, width=WIDTH, height=HEIGHT)
-		self.canvas4 = Canvas(self.fenetre, width=WIDTH, height=HEIGHT)
+		self.canvas1 = Canvas(self.fenetre, width=CW, height=CH)
+		self.canvas2 = Canvas(self.fenetre, width=CW, height=CH)
+		self.canvas3 = Canvas(self.fenetre, width=CW, height=CH)
+		self.canvas4 = Canvas(self.fenetre, width=CW, height=CH)
 
 		self.c1Text = self.canvas1.create_text(200, 25, text=Introduction)
 		self.c2Text = self.canvas2.create_text(200, 25, text=MENU[0])
@@ -56,16 +57,29 @@ class Programme():
 
 	def boucle(self):
 		self.fenetre.title(TITRE)
-		self.fenetre.geometry("800x400+550+350")
+		
+		self.positioning()
+		self.packing()
+		
+		self.fenetre.mainloop()
+
+	def positioning(self):
+		self.wS = self.fenetre.winfo_screenwidth()
+		self.hS = self.fenetre.winfo_screenheight()
+		print(self.wS, self.hS)
+		self.xW = self.wS/2 - WIDTH/2
+		self.yW = self.hS/2 - HEIGHT/2
+		self.fenetre.geometry("%dx%d+%d+%d" % (WIDTH, HEIGHT, self.xW, self.yW))
+
+	def packing(self):
 		self.canvas1.pack()
 		self.canvas2.pack()
 		self.canvas3.pack()
 		self.canvas4.pack()
 		self.c3Menu.pack()
 		self.frame1.pack(side="bottom")
-		self.bouOK.pack(side="left")
-		self.bouQT.pack(side="right")
-		self.fenetre.mainloop()
+		self.bouOK.pack(padx=10)
+		self.bouQT.pack(padx=10)
 
 	def clean(self):
 		self.canvas1.delete(self.c1Text)
@@ -93,11 +107,12 @@ class Programme():
 			pass
 
 	def quitter(self):
-		answer = messagebox.askquestion("Quitter le jeu ?", "Souhaitez vous quitter le jeu ?", 
-			icon='warning')
-		if answer == "yes":
-			print("Au revoir!")
-			sys.exit()
+		sys.exit()
+		# answer = messagebox.askquestion("Quitter le jeu ?", "Souhaitez vous quitter le jeu ?", 
+		# 	icon='warning')
+		# if answer == "yes":
+		# 	print("Au revoir!")
+		# 	sys.exit()
 
 
 # programme
