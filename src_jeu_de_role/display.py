@@ -98,7 +98,7 @@ class Programme():
 		elif select[0] == 0: #lancement d'une nouvelle partie
 			self.clean()
 			self.jeu = game.Jeu(self.fenetre)
-			self.jeu.boucle(self.fenetre)
+			self.jeu.chargement(self.fenetre)
 		
 		elif select[0] == 1: #charger une partie
 			pass

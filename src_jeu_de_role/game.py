@@ -7,12 +7,15 @@ from src_jeu_de_role import player
 class Jeu():
 	'''boucle principale du jeu'''
 
-	def __init__(self, master):
+	def __init__(self, parent):
 		intro="C'est parti !"
-		txt1 = Label(master, text=intro)
+		txt1 = Label(parent, text=intro)
 		txt1.pack()
 
-	def boucle(self, master):
-		joueur = player.Joueur(master)
+	def chargement(self, parent):
+		"met en place les éléments du jeu"
+		#Le joueur
+		self.joueur = player.Joueur(parent)
+		#Le monde
 
 		
