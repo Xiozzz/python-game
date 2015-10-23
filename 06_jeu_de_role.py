@@ -32,5 +32,4 @@ from src_jeu_de_role import display
 "Ce fichier ne fait qu'importer la bibliothèque display et lancer le jeu"
 
 if __name__ == "__main__":
-	menu = display.Programme()
-	menu.boucle()
+	JEU = display.Affichage()
