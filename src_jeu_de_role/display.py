@@ -3,6 +3,7 @@
 
 from tkinter import *
 from tkinter import messagebox
+from src_jeu_de_role import player
 
 TITRE = "Jeu de rôle tkinter"
 
@@ -60,7 +61,7 @@ class Affichage:
 
 	def menu(self):
 		self.question = Label(self.fDroitBottom, text=QUESTION)
-		self.menu = Listbox(self.fDroitBottom, width=40, height=3)
+		self.menu = Listbox(self.fDroitBottom, width=40, height=3, bd=1)
 		for i in MENU:
 			self.menu.insert(END, i)
 		self.question.grid(row="0", column="0")
@@ -84,8 +85,7 @@ class Affichage:
 				
 		elif select[0] == 0: #lancement d'une nouvelle partie
 			self.clean()
-			self.jeu = game.Jeu(self.fenetre)
-			self.jeu.chargement(self.fenetre)
+			self.jouer()
 		
 		elif select[0] == 1: #charger une partie
 			print("No saving system feature implemented yet")
@@ -103,10 +103,22 @@ class Affichage:
 		self.text.destroy()
 
 	def quitter(self):
-		# sys.exit()
-		answer = messagebox.askquestion("Quitter le jeu ?", "Souhaitez vous quitter le jeu ?", 
-			icon='warning')
-		if answer == "yes":
-			print("Au revoir!")
-			sys.exit()
-		
+		sys.exit()
+		# answer = messagebox.askquestion("Quitter le jeu ?", "Souhaitez vous quitter le jeu ?", 
+		# 	icon='warning')
+		# if answer == "yes":
+		# 	print("Au revoir!")
+		# 	sys.exit()
+
+	def jouer(self):
+
+		self.jeu = player.Joueur()
+		#self.jeu.intro(self.fenetre)
+
+
+	def editor(self):
+		pass
+
+
+	def loading(self):
+		pass
