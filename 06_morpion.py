@@ -1,11 +1,27 @@
 # -*- coding:Utf-8 -*-
-"jeu quatre en ligne"
+"le jeu du morpion/Tic Tac Toe"
 
 #bibliothèques importé (random sera utilisé pour l'IA)
 import random
 import sys
+import os
 
 # variables
+
+RANG = ["r1", "r2", "r3"]
+CASE = ["c1", "c2", "c3"]
+
+COORDINATES = {
+"a1" : ["r1", "c1"],
+"a2" : ["r2", "c1"],
+"a3" : ["r3", "c1"],
+"b1" : ["r1", "c2"],
+"b2" : ["r2", "c2"],
+"b3" : ["r3", "c2"],
+"c1" : ["r1", "c3"],
+"c2" : ["r2", "c3"],
+"c3" : ["r3", "c3"],
+}
 
 TABLEAU = { 
 "r1" : {"c1":0, "c2":0, "c3":0},
@@ -13,10 +29,7 @@ TABLEAU = {
 "r3" : {"c1":0, "c2":0, "c3":0},
 }
 
-JOUEUR = "O"
-ORDI = "X"
-
-TITRE = "=======\nJeu de Morpion\n=======\n"
+TITRE = "==========\nJeu du Morpion\n==========\n"
 
 MENU = [
 "Choisissez une option :", 
@@ -25,23 +38,70 @@ MENU = [
 "Vous ne pouvez choisir qu'entre 1 et 2 :"
 ]
 
+JEU = [
+"=====Votre tour=====",
+"Choisissez la colonne et la ligne dans laquelle vous souhaitez jouer.",
+"Choisissez un nombre s'il vous plait.",
+"Choisissez la colonne 'a', 'b' ou 'c' ET la ligne '1', '2' ou '3'. (ex : 'a1')",
+"Il faut donner seulement deux paramètres, une lettre et un chiffre. (ex : 'a1')"
+]
+
 #fonctions
 
 def afficherTableau(tableau):
 	"une grille de 7x6"
-	for i in range(7):
-		print(i, end=' |')
-	print()
+	c = 1
+	print("\n     a   b   c")
+	print("")
+	for i in RANG:
+		print("%s  | " % c, end="")
+		c += 1
+		# print("\nligne :", i)
+		for x in CASE:
+			# print("case", x, ":", end=" ")
+			if tableau[i][x] == 0:
+				print(".", "|", end=" ")
+			elif tableau[i][x] == 1:
+				print("X", "|", end=" ")
+			elif tableau[i][x] == 2:
+				print("O", "|", end=" ")
+		if i == "r3":
+			break #permet d'éviter la dernière ligne
+		print("\n", "  - - - - - - -")
+	print("\n")
 
+
+def inputPrompt():
+	answer = input(">>>")
+	return answer
 
 def verifNombre():
 	"vérification que l'input est bien d'un nombre"
-	answer = input(">>>")
+	answer = inputPrompt()
 	while answer not in list("1234567890"):
-		print("Choisissez un nombre s'il vous plait :")
-		answer = input(">>>")
+		print(JEU[2])
+		answer = inputPrompt()
 	return answer
 	 
+def verifInput():
+	"vérification que l'input est bien une lettre"
+	print(JEU[0])
+	print(JEU[1])
+	while True:
+		answer = inputPrompt()
+		if len(answer) < 2 or len(answer) > 2:
+			print(JEU[4])
+		elif answer[0] in list("abc") and answer[1] in list("123") and len(answer) == 2:
+			verif = 0
+			print("OK")
+			break
+		else:
+			print(JEU[3])
+	return answer
+
+def updateTableau(chx, turn):
+	global tableau
+	pass
 
 
 def programme():
@@ -51,14 +111,17 @@ def programme():
 	 
 	while True:
 		# affichage jeu
+		# os.system('cls')
 		afficherTableau(tableau)
-		input()
 
 		# tour du joueur
-
+		tour = 1
+		chxJoueur = verifInput()
+		print("debug2:", chxJoueur)
 		# vérification victoire
 
 		# tour de l'ordinateur
+		tour = 0
 
 		# vérification victoire
 
@@ -83,4 +146,5 @@ def menu():
 			reponse = verifNombre()
 
 if __name__ == "__main__":
-	menu()
+	# menu()
+	programme()
