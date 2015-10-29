@@ -1,10 +1,16 @@
 # -*- coding:Utf-8 -*-
 "le jeu du morpion/Tic Tac Toe"
 
+'''
+- un systeme de reset du tableau pour remettre tout à zéro quand une nouvelle partie
+- le tour de l'ordinateur et une petit IA
+'''
+
 #bibliothèques importé (random sera utilisé pour l'IA)
 import random
 import sys
 import os
+import time
 
 # variables
 
@@ -29,6 +35,17 @@ TABLEAU = {
 "r3" : {"c1":0, "c2":0, "c3":0},
 }
 
+VICTOIRES = [
+	["a1", "b2", "c3"],
+	["a3", "b2", "c1"],
+	["a1", "a2", "a3"],
+	["a1", "b1", "c1"],
+	["a2", "b2", "c2"],
+	["a3", "b3", "c3"],
+	["b1", "b2", "b3"],
+	["c1", "c2", "c3"]
+]
+
 TITRE = "==============\nJeu du Morpion\n==============\n"
 
 MENU = [
@@ -46,7 +63,8 @@ JEU = [
 "Il faut donner seulement deux paramètres, une lettre et un chiffre. (ex : 'a1')",
 "Cette case à déjà été choisi, choisissez en une autre s'il vous plaît.",
 "Bravo vous avez gagné ! :)",
-"Dommage vous avez perdu ! :("
+"Dommage vous avez perdu ! :(",
+"C'est au tour de l'ordinateur de jouer."
 ]
 
 #fonctions
@@ -140,17 +158,36 @@ def updateTableau(chx, tr, tb):
 		tb[coords[0]][coords[1]] = 2
 	return tb
 
-def verifVictoire(tab):
+def verifVictoire(tab, tr):
 	"retourne true si une ligne du tableau est complète"
-	return False
+	compteur = 0
+
+	for i in VICTOIRES:
+		xy1 = COORDINATES[i[0]]
+		xy2 = COORDINATES[i[1]]
+		xy3 = COORDINATES[i[2]]
+		c1 = tab[xy1[0]][xy1[1]]
+		c2 = tab[xy2[0]][xy2[1]]
+		c3 = tab[xy3[0]][xy3[1]]
+		if c1 == tr and c2 == tr and c3 == tr:
+			compteur = 1
+		# print("debug01", xy1, xy2, xy3, c1, c2, c3, c1 == tr and c2 == tr and c3 == tr)
+
+	# print("debug02, compteur =", compteur)		
+	if compteur == 1:
+		print("YES !")
+		return True
+	else:
+		return False
 
 
 def programme():
 	"boucle principale, affichage, input et vérification"
 	# instance du tableau
-	tableau = TABLEAU
-	 
-	while True:
+	tableau = TABLEAU.copy()
+	game = 1
+
+	while game:
 		# affichage jeu
 		os.system('cls')
 		afficherTableau(tableau)
@@ -167,15 +204,19 @@ def programme():
 				chxJoueur = verifInput()
 
 		# vérification victoire
-		if verifVictoire(tableau):
+		if verifVictoire(tableau, tour):
 			print(JEU[6])
+			time.sleep(2)
+			game = 0
 
 		# tour de l'ordinateur
-		tour = 2
+		# tour = 2
+		# print(JEU[8])
+		# time.sleep(1) #debug
 
 		# vérification victoire
-		if verifVictoire(tableau):
-			print(JEU[7])
+		# if verifVictoire(tableau, tour):
+		# 	print(JEU[7])
 
 
 def menu():
@@ -190,6 +231,7 @@ def menu():
 	while True:
 		if reponse == "1":
 			programme()
+			break
 
 		elif reponse == "2":
 			sys.exit()
@@ -199,4 +241,5 @@ def menu():
 			reponse = verifNombre()
 
 if __name__ == "__main__":
-	menu()
+	while True:
+		menu()
