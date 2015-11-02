@@ -1,6 +1,10 @@
 # -*- coding:Utf-8 -*-
 "le jeu du morpion/Tic Tac Toe"
 
+'''
+-faire une vérification si le tableau est complet sans victoire pour annoncer une égalité
+'''
+
 #bibliothèques importé (random sera utilisé pour l'IA)
 import random
 import sys
@@ -188,12 +192,12 @@ def verifVictoire(tab, tr):
 		return False
 
 def tourOrdinateur(tab):
-	"vérifie le tableau et les victoires possibles et choisit en conséquence"
+	"vérifie le tableau et les victoires possibles et fait un choix en conséquence"
 	
 	casesTop = []
-	index = 0
+	# index = 0
 
-	for i in VICTOIRES:
+	for i in VICTOIRES: # boucle qui passe par toutes les victoires possibles
 		compteur = 0 
 
 		#les coordonées de chaque cases
@@ -214,46 +218,81 @@ def tourOrdinateur(tab):
 		if c3 > 0:
 			compteur += 1
 
+		#si le compteur compte 2 case occupé dans une lignes, il ajoute cette ligne à casesTop
 		if compteur == 2:
-			casesTop.append({i[0]:"", i[1]:"", i[2]:"", "flag":0})
-			casesTop[index][i[0]] = c1
-			casesTop[index][i[1]] = c2
-			casesTop[index][i[2]] = c3
-			index += 1
+			casesTop.append({i[0]:c1, i[1]:c2, i[2]:c3})
+			# casesTop[index][i[0]] = c1
+			# casesTop[index][i[1]] = c2
+			# casesTop[index][i[2]] = c3
+			# index += 1
 
 	if len(casesTop) > 0:
-		print(casesTop) #DEBUG
-		#écrire le choix de l'ordinateur en fonction de ce qui se présente ici :
-		choice = None
-		flag1, flag2 = 0, 0
-
-		for i in casesTop:
-			print(i)
-			for c in i:
-				print(c, "case :", i[c])
-				if i[c] == 1:
-					flag1 += 1
-				if i[c] == 2:
-					flag2 += 1
-			
-			if flag1 >= 2:
-				i["flag"] = 1
-			elif flag2 >= 2:
-				i["flag"] = 2
-		
-		print(casesTop)
-		input() #DEBUG
-
-		if choice is not None:
-			return choice
-		else:
-			return random.choice(list(CASES))
-
-
-
+		choix = choixOrdi(casesTop)
+		return choix
 	else:
 		return random.choice(list(CASES))
 
+
+def choixOrdi(lignes):
+	"retourne le choix de l'ordinateur en fonction des lignes."
+		
+	print("DEBUG 01 :", lignes) #DEBUG PRINT 1
+	choix = None
+	cpt1, cpt2 = 0, 0 #compteurs
+	flag1, flag2 = [], [] #meilleures lignes
+
+	#trie des lignes
+	for ligne in lignes:
+		print("ligne :", ligne)
+		
+		for case in ligne:
+			print("case :", case, "=", ligne[case])
+			caseContent = ligne[case]
+			if caseContent == 1:
+				cpt1 += 1
+			if caseContent == 2:
+				cpt2 += 1
+		
+		if cpt1 == 2:			
+			flag1.append(ligne)
+		if cpt2 == 2:
+			flag2.append(ligne)
+		cpt1, cpt2 = 0, 0
+
+	print("flag1, ligne occupé par le joueur", flag1, len(flag1), "\n\
+flag2, ligne occupé par l'ordinateur", flag2, len(flag2))
+
+	#choix d'une case vide sur la meilleure ligne
+	print("I will make a choice now.")
+	if len(flag2):
+		print("Yes, I win !")
+		for ligne in flag2:
+			print(ligne)
+			for case in ligne:
+				print(case)
+				if ligne[case] == 0:
+					choix = case
+					print("I choose :", choix)
+					input("DEBUG WAIT win")
+					return choix
+
+	elif len(flag1):
+		print("Yes, I block the player !")
+		for ligne in flag1:
+			print(ligne)
+			for case in ligne:
+				print(case)
+				if ligne[case] == 0:
+					choix = case
+					print("I choose :", choix)
+					input("DEBUG WAIT block")
+					return choix
+	else:
+		print("I play random because I see no solution to block or to win")
+		input("DEBUG WAIT random")
+		return random.choice(list(CASES))
+	
+	
 
 
 def programme():
