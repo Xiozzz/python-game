@@ -1,11 +1,7 @@
 # -*- coding:Utf-8 -*-
 "le jeu du morpion/Tic Tac Toe"
 
-'''
--faire une vérification si le tableau est complet sans victoire pour annoncer une égalité
-'''
-
-#bibliothèques importé (random sera utilisé pour l'IA)
+#bibliothèques importés (random est utilisé pour l'IA)
 import random
 import sys
 import os
@@ -68,7 +64,8 @@ JEU = [
 "Bravo vous avez gagné ! :)",
 "Dommage vous avez perdu ! :(",
 "C'est au tour de l'ordinateur de jouer.",
-"L'ordinateur choisi de jouer"
+"L'ordinateur choisi de jouer",
+"le tableau est plein ! C'est une égalité."
 ]
 
 #fonctions
@@ -82,9 +79,7 @@ def afficherTableau(tableau):
 	for i in RANG:
 		print("%s  | " % c, end="")
 		c += 1
-		# print("\nligne :", i)
 		for x in COLN:
-			# print("case", x, ":", end=" ")
 			if tableau[i][x] == 0:
 				print(".", "|", end=" ")
 			elif tableau[i][x] == 1:
@@ -92,7 +87,7 @@ def afficherTableau(tableau):
 			elif tableau[i][x] == 2:
 				print("O", "|", end=" ")
 		if i == "r3":
-			break #permet d'éviter la dernière ligne
+			break #permet d'éviter la dernière ligne -
 		print("\n", "  - - - - - - -")
 	print("\n")
 
@@ -144,16 +139,29 @@ def reverseText(string):
 	else:
 		return string
 
-
-def verifTableau(chx, tb):
+def verifCase(chx, tb):
 	"vérifie si la case n'a pas déjà été choisi, return false si elle est prise, true si elle est libre"
 	coords = CASES[chx]
 	case = tb[coords[0]][coords[1]]
+	
 	if case == 0:
 		return True
 	else:
 		return False
 
+def verifTableau(tb):
+	"return True si le tableau est plein"
+	compteur = 0
+
+	for r in tb:
+		for c in tb[r]:
+			if tb[r][c] != 0:
+				compteur += 1
+
+	if compteur == 9:
+		return True
+	else:
+		return False
 
 def updateTableau(chx, tr, tb):
 	"met à jour le tableau en fonction du choix envoyé"
@@ -183,9 +191,7 @@ def verifVictoire(tab, tr):
 		c3 = tab[xy3[0]][xy3[1]]
 		if c1 == tr and c2 == tr and c3 == tr:
 			compteur = 1
-		# print("debug01", xy1, xy2, xy3, c1, c2, c3, c1 == tr and c2 == tr and c3 == tr)
 
-	# print("debug02, compteur =", compteur)		
 	if compteur == 1:
 		return True
 	else:
@@ -193,9 +199,7 @@ def verifVictoire(tab, tr):
 
 def tourOrdinateur(tab):
 	"vérifie le tableau et les victoires possibles et fait un choix en conséquence"
-	
 	casesTop = []
-	# index = 0
 
 	for i in VICTOIRES: # boucle qui passe par toutes les victoires possibles
 		compteur = 0 
@@ -221,11 +225,8 @@ def tourOrdinateur(tab):
 		#si le compteur compte 2 case occupé dans une lignes, il ajoute cette ligne à casesTop
 		if compteur == 2:
 			casesTop.append({i[0]:c1, i[1]:c2, i[2]:c3})
-			# casesTop[index][i[0]] = c1
-			# casesTop[index][i[1]] = c2
-			# casesTop[index][i[2]] = c3
-			# index += 1
 
+	#s'il existe au moins une ligne occupé deux fois, la fonction choixOrdi est lancé, sinon choix aléatoire
 	if len(casesTop) > 0:
 		choix = choixOrdi(casesTop)
 		return choix
@@ -235,61 +236,39 @@ def tourOrdinateur(tab):
 
 def choixOrdi(lignes):
 	"retourne le choix de l'ordinateur en fonction des lignes."
-		
-	print("DEBUG 01 :", lignes) #DEBUG PRINT 1
 	choix = None
 	cpt1, cpt2 = 0, 0 #compteurs
 	flag1, flag2 = [], [] #meilleures lignes
 
-	#trie des lignes
+	#trie des lignes importantes
 	for ligne in lignes:
-		print("ligne :", ligne)
-		
 		for case in ligne:
-			print("case :", case, "=", ligne[case])
 			caseContent = ligne[case]
 			if caseContent == 1:
 				cpt1 += 1
 			if caseContent == 2:
 				cpt2 += 1
-		
 		if cpt1 == 2:			
 			flag1.append(ligne)
 		if cpt2 == 2:
 			flag2.append(ligne)
 		cpt1, cpt2 = 0, 0
 
-	print("flag1, ligne occupé par le joueur", flag1, len(flag1), "\n\
-flag2, ligne occupé par l'ordinateur", flag2, len(flag2))
-
 	#choix d'une case vide sur la meilleure ligne
-	print("I will make a choice now.")
 	if len(flag2):
-		print("Yes, I win !")
 		for ligne in flag2:
-			print(ligne)
 			for case in ligne:
-				print(case)
 				if ligne[case] == 0:
 					choix = case
-					print("I choose :", choix)
-					input("DEBUG WAIT win")
 					return choix
 
 	elif len(flag1):
-		print("Yes, I block the player !")
 		for ligne in flag1:
-			print(ligne)
 			for case in ligne:
-				print(case)
 				if ligne[case] == 0:
 					choix = case
-					print("I choose :", choix)
-					input("DEBUG WAIT block")
 					return choix
 	else:
-		print("I play random because I see no solution to block or to win")
-		input("DEBUG WAIT random")
 		return random.choice(list(CASES))
 	
 	
@@ -309,7 +288,7 @@ def programme():
 		chxJoueur = verifInput()
 
 		while True:
-			if verifTableau(chxJoueur, tableau):
+			if verifCase(chxJoueur, tableau):
 				tableau = updateTableau(chxJoueur, tour, tableau)
 				break
 			else:
@@ -318,6 +297,12 @@ def programme():
 		
 		# affichage du jeu pour tour 1
 		afficherTableau(tableau)
+
+		# vérification égalité
+		if verifTableau(tableau):
+			print(JEU[10])
+			time.sleep(2)
+			break
 
 		# vérification victoire
 		if verifVictoire(tableau, tour):
@@ -333,24 +318,26 @@ def programme():
 		chxOrdi = tourOrdinateur(tableau)
 
 		while True:
-			print("debug:", chxOrdi)
-			if verifTableau(chxOrdi, tableau):
+			if verifCase(chxOrdi, tableau):
 				tableau = updateTableau(chxOrdi, tour, tableau)
 				break
 			else:
 				chxOrdi = tourOrdinateur(tableau)
 
-		print(JEU[9], chxOrdi, end=".\n")
-
 		# affichage jeu du tour 2
 		afficherTableau(tableau)
+
+		# vérification égalité
+		if verifTableau(tableau):
+			print(JEU[10])
+			time.sleep(2)
+			break
 
 		# vérification victoire
 		if verifVictoire(tableau, tour):
 			print(JEU[7])
 			time.sleep(2)
 			break
-
 
 def menu():
 	os.system('cls')
