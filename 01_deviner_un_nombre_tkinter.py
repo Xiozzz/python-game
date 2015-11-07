@@ -2,11 +2,7 @@
 "deviner un nombre avec interface tkinter"
 
 '''
-- un menu pour démarrer la partie ou quitter
-- l'affichaque du nombre de tours qui diminu (grosse police/font dans une case colorée)
-- affichage d'une information qui annonce si le nombre est plus grand ou plus petit dans un rectangle jaune
-- si le nombre de tour passe, perdu dans un rectangle rouge
-- affichage rectangle vert victoire !
+- un triangle qui monte ou descend selon l'indication
 '''
 
 from tkinter import *
@@ -20,17 +16,15 @@ import time
 nbChoix = 0
 nbTours = 6
 nbEssai = []
-listNb = ""
 
 #fonctions
 
 def start():
 	"Remise à zéro pour une nouvelle partie"
-	global nbTours, nbChoix, nbEssai, listNb
+	global nbTours, nbChoix, nbEssai
 	nbTours = 6
 	nbChoix = randint(0, 100)
 	nbEssai = []
-	listNb = ""
 	can1.itemconfig(txt1, text="Essayez de deviner le nombre !")
 	can1.itemconfig(recJeu, fill="light grey")
 	can1.itemconfig(txtJeu, text="")
@@ -42,7 +36,8 @@ def exit():
 
 def nouvellePartie():
 	"demande si l'on souhaite faire une nouvelle partie"
-
+	fenetre.update()
+	time.sleep(2)
 	answer = tkinter.messagebox.askquestion("Nouvelle partie ?","Voulez vous faire une nouvelle partie ?")
 	if answer == "yes":
 		start()
@@ -70,7 +65,7 @@ def returnKey(event):
 	jeu()
 
 def jeu():
-	global nbTours, nbEssai, listNb
+	global nbTours, nbEssai
 	
 
 	nombre = ent1.get()
@@ -89,12 +84,15 @@ def jeu():
 	can1.itemconfig(txtTour, text="Nombre de tours restants : {}".format(nbTours))
 	
 	nbEssai.sort()
+	listNb = ""
 	for i in nbEssai:
+		print(i)
 		listNb += " " + i
 
 	can1.itemconfig(txtEssai, text="Vous avez déjà essayé : {}".format(listNb))
 	
 	if nbTours == 0:
+		fleche()
 		can1.itemconfig(recJeu, fill="red")
 		can1.itemconfig(txtJeu, text="Vous avez\n perdu ! :(")
 		nouvellePartie()
@@ -107,20 +105,33 @@ def comparaison(nb):
 	if nbComp == nbChoix:
 		can1.itemconfig(recJeu, fill="green")
 		can1.itemconfig(txtJeu, text="Vous avez trouvé\n le nombre {} !".format(nbChoix))
+		fleche()
+		nouvellePartie()
 	elif nbComp < nbChoix:
 		can1.itemconfig(recJeu, fill="orange")
 		can1.itemconfig(txtJeu, text="Le nombre est\n plus grand.")
+		fleche("plus")
 	elif nbComp > nbChoix:
 		can1.itemconfig(recJeu, fill="orange")
 		can1.itemconfig(txtJeu, text="Le nombre est\n plus petit.")
+		fleche("moins")
 
-def flecheHaut():
+def fleche(direction=""):
 	"une fleche avec un rectangle et un triangle filled black"
-	pass
+	if direction == "plus": #se tourne vers le haut
+		can1.coords(flc1Jeu, 30, 50, 10, 75, 50, 75)
+		can1.itemconfig(flc1Jeu, fill="black", outline="black")
+		can1.coords(flc2Jeu, 20, 75, 40, 90)
+		can1.itemconfig(flc2Jeu, fill="black", outline="black")
+	elif direction == "moins": #se tourne vers le bas
+		can1.coords(flc1Jeu, 175, 90, 155, 75, 195, 75)
+		can1.itemconfig(flc1Jeu, fill="black", outline="black")
+		can1.coords(flc2Jeu, 165, 50, 185, 75)
+		can1.itemconfig(flc2Jeu, fill="black", outline="black")
+	else: #s'efface
+		can1.itemconfig(flc1Jeu, fill="light grey", outline="light grey")
+		can1.itemconfig(flc2Jeu, fill="light grey", outline="light grey")
 
-def flecheBas():
-	"une fleche avec un rectangle et un triangle filled black"
-	pass
 
 def centrer():
 	fenetre.update_idletasks()
@@ -141,6 +152,8 @@ can1 = Canvas(fenetre, width=200, height=100, bg="light grey")
 txt1 = can1.create_text(100, 10, text="Hello, World!")
 txtTour = can1.create_text(100, 25, text="Nombre de tours restants : {}".format(nbTours), font="Arial 10 bold")
 recJeu = can1.create_rectangle(55, 55, 150, 95, fill="light grey", outline="light grey")
+flc1Jeu = can1.create_polygon(50, 50, 30, 75, 70, 75, fill="light grey")
+flc2Jeu = can1.create_rectangle(40, 75, 60, 90, outline="light grey")
 txtJeu = can1.create_text(100, 75, text="")
 txtEssai = can1.create_text(100, 40, text="")
 
@@ -164,4 +177,4 @@ start()
 bouNP = Button(fenetre, text="Nouvelle Partie", command=start)
 
 centrer()
-fenetre.mainloop() #boucle principale
+fenetre.mainloop() #boucle principale 
