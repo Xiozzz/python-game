@@ -1,10 +1,6 @@
 # -*- coding:Utf-8 -*-
 "deviner un nombre avec interface tkinter"
 
-'''
-- un triangle qui monte ou descend selon l'indication
-'''
-
 from tkinter import *
 import sys
 from random import randint
@@ -152,8 +148,8 @@ can1 = Canvas(fenetre, width=200, height=100, bg="light grey")
 txt1 = can1.create_text(100, 10, text="Hello, World!")
 txtTour = can1.create_text(100, 25, text="Nombre de tours restants : {}".format(nbTours), font="Arial 10 bold")
 recJeu = can1.create_rectangle(55, 55, 150, 95, fill="light grey", outline="light grey")
-flc1Jeu = can1.create_polygon(50, 50, 30, 75, 70, 75, fill="light grey")
-flc2Jeu = can1.create_rectangle(40, 75, 60, 90, outline="light grey")
+flc1Jeu = can1.create_polygon(0, 0, 0, 0, 0, 0, fill="light grey")
+flc2Jeu = can1.create_rectangle(0, 0, 0, 0, outline="light grey")
 txtJeu = can1.create_text(100, 75, text="")
 txtEssai = can1.create_text(100, 40, text="")
 
