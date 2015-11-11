@@ -2,16 +2,21 @@
 
 #libraries
 from tkinter import *
-from random import randint
+from random import randint, choice
 import sys
 
 
 #variables
 TITLE = "Rock, Paper, Scissors"
+TEXT = ["You have won. :)", "You have lost. :(", "This is tie"]
+
 CHOIX = ["paper", "rock", "scissors"]
 WIDTH, HEIGHT = 400, 400
 COLOR = ["blue", "yellow", "red", "light grey"]
 INTRO = "Welcome in Rock, Paper, Scissors"
+
+
+flag = 0
 
 #functions
 def createButton(t, c):
@@ -30,7 +35,7 @@ def setWindow():
 	x = (root.winfo_screenwidth()//2) - width//2
 	y = (root.winfo_screenheight()//2) - height//2
 	root.geometry("{}x{}+{}+{}".format(width, height, x, y))
-	root.update()
+	root.resizable(0,0)
 	
 def setGrid():
 	"set the grid system for each widgets"
@@ -40,6 +45,10 @@ def setGrid():
 	butQuitter.grid(row=3, column=4, pady=5)
 
 def setGame():
+	"set the grid for the new game"
+	global flag
+	flag = 1
+	setImages()
 	butStart.grid_forget()
 	butPaper.grid(row=3, column=1, sticky="e")
 	butRock.grid(row=3, column=2)
@@ -52,8 +61,63 @@ def createImage(x, y, img):
 def exit(event):
 	sys.exit()
 
-def choice(chx):
-	print(chx)
+def setImages():
+	"bind the mouse to the canvas images"
+	
+	imgRock = createImage(200, 300, rockimg)
+	imgPaper = createImage(300, 150, paperimg)
+	imgScissors = createImage(100, 150, scissorsimg)
+
+	gameScreen.tag_bind(imgRock, "<Button-1>", lambda e: play(CHOIX[0]))
+	gameScreen.tag_bind(imgPaper, "<Button-1>", lambda e: play(CHOIX[1]))
+	gameScreen.tag_bind(imgScissors, "<Button-1>", lambda e: play(CHOIX[2]))
+
+def play(chx):
+	global flag
+
+	victoire = ""
+
+	if flag == 1:
+		clean()
+		computer = choice(CHOIX)
+
+		if computer == chx:
+			victoire = TEXT[2]
+		elif computer == "rock":
+			if chx == "paper":
+				victoire = TEXT[0]
+			if chx == "scissors":
+				victoire = TEXT[1]
+		elif computer == "scissors":
+			if chx == "rock":
+				victoire = TEXT[0]
+			if chx == "paper":
+				victoire = TEXT[1]
+		elif computer == "paper":
+			if chx == "scissors":
+				victoire = TEXT[0]
+			if chx == "rock":
+				victoire = TEXT[1]
+
+		updateScreen(chx, computer, victoire)
+		flag = 0
+
+	else:
+		pass
+
+def clean():
+	gameScreen.delete("all")
+
+def updateScreen(chxJoueur, chxComputer, victoire):
+	butPaper.grid_forget()
+	butRock.grid_forget()
+	butScissor.grid_forget()
+	butStart.grid(row=3, column=1, columnspan=3)
+
+	#recréer les images correspondantes en fonction des choix
+
+	#changer le scoreTexte
+	scoreScreen.itemconfig(scoreTexte, text="You choose {}, computer choose {}, {}".format(chxJoueur, chxComputer, victoire))
 
 #program
 if __name__ == "__main__":
@@ -65,9 +129,9 @@ if __name__ == "__main__":
 	scoreTexte = scoreScreen.create_text(200, 20, text=INTRO, font=("Arial", 10))
 	
 	#create the differents input button of the game
-	butPaper = createButton(CHOIX[0], lambda: choice(CHOIX[0]))
-	butRock = createButton(CHOIX[1], lambda: choice(CHOIX[1]))
-	butScissor = createButton(CHOIX[2], lambda: choice(CHOIX[2]))
+	butPaper = createButton(CHOIX[0], lambda: play(CHOIX[0]))
+	butRock = createButton(CHOIX[1], lambda: play(CHOIX[1]))
+	butScissor = createButton(CHOIX[2], lambda: play(CHOIX[2]))
 	butQuitter = createButton("Q", root.quit)
 	butStart = createButton("Start A New Game", setGame)
 
@@ -75,9 +139,6 @@ if __name__ == "__main__":
 	rockimg = PhotoImage(file="src02_rock-paper-scissors/rock.gif")
 	paperimg = PhotoImage(file="src02_rock-paper-scissors/paper.gif")
 	scissorsimg = PhotoImage(file="src02_rock-paper-scissors/scissors.gif")
-	imgRock = createImage(100, 100, rockimg)
-	imgPaper = createImage(100, 200, paperimg)
-	imgScissors = createImage(100, 300, scissorsimg)
 
 	setGrid()
 
