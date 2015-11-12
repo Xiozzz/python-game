@@ -48,6 +48,7 @@ def setGame():
 	"set the grid for the new game"
 	global flag
 	flag = 1
+	clean()
 	setImages()
 	butStart.grid_forget()
 	butPaper.grid(row=3, column=1, sticky="e")
@@ -67,9 +68,9 @@ def setImages():
 	imgRock = createImage(200, 300, rockimg)
 	imgPaper = createImage(300, 150, paperimg)
 	imgScissors = createImage(100, 150, scissorsimg)
-
-	gameScreen.tag_bind(imgRock, "<Button-1>", lambda e: play(CHOIX[0]))
-	gameScreen.tag_bind(imgPaper, "<Button-1>", lambda e: play(CHOIX[1]))
+	
+	gameScreen.tag_bind(imgPaper, "<Button-1>", lambda e: play(CHOIX[0]))
+	gameScreen.tag_bind(imgRock, "<Button-1>", lambda e: play(CHOIX[1]))
 	gameScreen.tag_bind(imgScissors, "<Button-1>", lambda e: play(CHOIX[2]))
 
 def play(chx):
@@ -115,6 +116,14 @@ def updateScreen(chxJoueur, chxComputer, victoire):
 	butStart.grid(row=3, column=1, columnspan=3)
 
 	#recréer les images correspondantes en fonction des choix
+	if chxJoueur == CHOIX[0] or chxComputer == CHOIX[0]:
+		imgPaper = createImage(300, 150, paperimg)
+	if chxJoueur == CHOIX[1] or chxComputer == CHOIX[1]:
+		imgRock = createImage(200, 300, rockimg)
+	if chxJoueur == CHOIX[2] or chxComputer == CHOIX[2]:
+		imgScissors = createImage(100, 150, scissorsimg)
+
+
 
 	#changer le scoreTexte
 	scoreScreen.itemconfig(scoreTexte, text="You choose {}, computer choose {}, {}".format(chxJoueur, chxComputer, victoire))
