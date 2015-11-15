@@ -1,13 +1,20 @@
-## Tutoriel sur la création de l'histoire du jeu vidéo
+## Free and Open Source University Curriculum
+**A path for learning computer science through web and game development**
 
-#### Partie 1 - Python
--Jeux textuels en ligne de commande
+##Vidéo game history remake, a video game development curriculum
 
-#### Partie 2 - Python
--Jeux avec interface graphique d'utilisateur (tkinter, pyGTK)
+####Tools
+* python
+* tkinter
+* pygame
+* kivy
+* inkscape
+* gimp
+* blender
+* panda3D
 
-#### Partie 3 - Python
--Jeux avec moteur graphique multimédia (pygame, kivy)
+####Projects
 
-#### Partie 4 - Python
--Jeux avec moteur graphique 3D (blender, Panda3D)
+* guess a number
+* rock paper scissors
+* tic tac toe
