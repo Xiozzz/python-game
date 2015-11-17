@@ -31,7 +31,7 @@ COORDX = list('abcdefghijklmno')
 COORDY = list('1234567')
 
 #names of each position in the game table
-POSITIONS ={
+POSNAMES ={
 	'a1' : 'stackHide', 'a2' : 'stackView', 'a3' : 'freeSpace', 'a4' : 'cell1',	'a5' : 'cell2',	'a6' : 'cell3',	'a7' : 'cell4',
 	'b1' : 'minStack0', 'b2' : 'minStack1', 'b3' : 'minStack2', 'b4' : 'minStack3',	'b5' : 'minStack4', 'b6' : 'minStack5', 'b7' : 'minStack6',
 	'c1' : 'cardc1', 'c2' : 'cardc2', 'c3' : 'cardc3', 'c4' : 'cardc4', 'c5' : 'cardc5', 'c6' : 'cardc6', 'c7' : 'cardc7',
@@ -51,30 +51,30 @@ POSITIONS ={
 
 #variables
 #where are positioned each cards
-cardsCoordinates = {
+cardsPositions = {
 'A1':None, 'A2':None, 'A3':None, 'A4':None, 'A5':None, 'A6':None, 'A7':None, 'A8':None, 'A9':None, 'A10':None, 'A11':None, 'A12':None, 'A13':None,
 'B1':None, 'B2':None, 'B3':None, 'B4':None, 'B5':None, 'B6':None, 'B7':None, 'B8':None, 'B9':None, 'B10':None, 'B11':None, 'B12':None, 'B13':None,
 'C1':None, 'C2':None, 'C3':None, 'C4':None, 'C5':None, 'C6':None, 'C7':None, 'C8':None, 'C9':None, 'C10':None, 'C11':None, 'C12':None, 'C13':None,
 'D1':None, 'D2':None, 'D3':None, 'D4':None, 'D5':None, 'D6':None, 'D7':None, 'D8':None, 'D9':None, 'D10':None, 'D11':None, 'D12':None, 'D13':None
 }
 
-#occupation of cards for each position 'name':[ #index0 numbers of cards max, #index1 numbers of cards now , #index2 cardname, #index3 cardname, #index4 cardname, etc..]
-cardsPositions = {
-'stackHide':[40, 0], 'stackView':[40, 0], 'freeSpace':[0, 0], 'cell1':[13, 0], 'cell2':[13, 0], 'cell3':[13, 0], 'cell4':[13, 0],
-'minStack0':[0, 0], 'minStack1':[1, 0], 'minStack2':[2, 0], 'minStack3':[3, 0], 'minStack4':[4, 0], 'minStack5':[5, 0], 'minStack6':[6, 0], 'minStack7':[7, 0],
-'cardc1':[1, 0], 'cardc2':[1, 0], 'cardc3':[1, 0], 'cardc4':[1, 0], 'cardc5':[1, 0], 'cardc6':[1, 0], 'cardc7':[1, 0], 
-'cardd1':[1, 0], 'cardd2':[1, 0], 'cardd3':[1, 0], 'cardd4':[1, 0], 'cardd5':[1, 0], 'cardd6':[1, 0], 'cardd7':[1, 0],
-'carde1':[1, 0], 'carde2':[1, 0], 'carde3':[1, 0], 'carde4':[1, 0], 'carde5':[1, 0], 'carde6':[1, 0], 'carde7':[1, 0],
-'cardf1':[1, 0], 'cardf2':[1, 0], 'cardf3':[1, 0], 'cardf4':[1, 0], 'cardf5':[1, 0], 'cardf6':[1, 0], 'cardf7':[1, 0], 
-'cardg1':[1, 0], 'cardg2':[1, 0], 'cardg3':[1, 0], 'cardg4':[1, 0], 'cardg5':[1, 0], 'cardg6':[1, 0], 'cardg7':[1, 0], 
-'cardh1':[1, 0], 'cardh2':[1, 0], 'cardh3':[1, 0], 'cardh4':[1, 0], 'cardh5':[1, 0], 'cardh6':[1, 0], 'cardh7':[1, 0], 
-'cardi1':[1, 0], 'cardi2':[1, 0], 'cardi3':[1, 0], 'cardi4':[1, 0], 'cardi5':[1, 0], 'cardi6':[1, 0], 'cardi7':[1, 0], 
-'cardj1':[1, 0], 'cardj2':[1, 0], 'cardj3':[1, 0], 'cardj4':[1, 0], 'cardj5':[1, 0], 'cardj6':[1, 0], 'cardj7':[1, 0], 
-'cardk1':[1, 0], 'cardk2':[1, 0], 'cardk3':[1, 0], 'cardk4':[1, 0], 'cardk5':[1, 0], 'cardk6':[1, 0], 'cardk7':[1, 0], 
-'cardl1':[1, 0], 'cardl2':[1, 0], 'cardl3':[1, 0], 'cardl4':[1, 0], 'cardl5':[1, 0], 'cardl6':[1, 0], 'cardl7':[1, 0], 
-'cardm1':[1, 0], 'cardm2':[1, 0], 'cardm3':[1, 0], 'cardm4':[1, 0], 'cardm5':[1, 0], 'cardm6':[1, 0], 'cardm7':[1, 0], 
-'cardn1':[1, 0], 'cardn2':[1, 0], 'cardn3':[1, 0], 'cardn4':[1, 0], 'cardn5':[1, 0], 'cardn6':[1, 0], 'cardn7':[1, 0], 
-'cardo1':[1, 0], 'cardo2':[1, 0], 'cardo3':[1, 0], 'cardo4':[1, 0], 'cardo5':[1, 0], 'cardo6':[1, 0], 'cardo7':[1, 0]
+#occupation of each space 'name':[ #index0 numbers of cards max, #index1 numbers of cards now]
+tableOccupation = {
+'a1':[31, 0], 'a2':[31, 0], 'a3':[0, 0], 'a4':[13, 0], 'a5':[13, 0], 'a6':[13, 0], 'a7':[13, 0],
+'b1':[0, 0], 'b2':[1, 0], 'b3':[2, 0], 'b4':[3, 0], 'b5':[4, 0], 'b6':[5, 0], 'b7':[6, 0],
+'c1':[1, 0], 'c2':[1, 0], 'c3':[1, 0], 'c4':[1, 0], 'c5':[1, 0], 'c6':[1, 0], 'c7':[1, 0],
+'d1':[1, 0], 'd2':[1, 0], 'd3':[1, 0], 'd4':[1, 0], 'd5':[1, 0], 'd6':[1, 0], 'd7':[1, 0],
+'e1':[1, 0], 'e2':[1, 0], 'e3':[1, 0], 'e4':[1, 0], 'e5':[1, 0], 'e6':[1, 0], 'e7':[1, 0],
+'f1':[1, 0], 'f2':[1, 0], 'f3':[1, 0], 'f4':[1, 0], 'f5':[1, 0], 'f6':[1, 0], 'f7':[1, 0],
+'g1':[1, 0], 'g2':[1, 0], 'g3':[1, 0], 'g4':[1, 0], 'g5':[1, 0], 'g6':[1, 0], 'g7':[1, 0],
+'h1':[1, 0], 'h2':[1, 0], 'h3':[1, 0], 'h4':[1, 0], 'h5':[1, 0], 'h6':[1, 0], 'h7':[1, 0],
+'i1':[1, 0], 'i2':[1, 0], 'i3':[1, 0], 'i4':[1, 0], 'i5':[1, 0], 'i6':[1, 0], 'i7':[1, 0],
+'j1':[1, 0], 'j2':[1, 0], 'j3':[1, 0], 'j4':[1, 0], 'j5':[1, 0], 'j6':[1, 0], 'j7':[1, 0],
+'k1':[1, 0], 'k2':[1, 0], 'k3':[1, 0], 'k4':[1, 0], 'k5':[1, 0], 'k6':[1, 0], 'k7':[1, 0],
+'l1':[1, 0], 'l2':[1, 0], 'l3':[1, 0], 'l4':[1, 0], 'l5':[1, 0], 'l6':[1, 0], 'l7':[1, 0],
+'m1':[1, 0], 'm2':[1, 0], 'm3':[1, 0], 'm4':[1, 0], 'm5':[1, 0], 'm6':[1, 0], 'm7':[1, 0],
+'n1':[1, 0], 'n2':[1, 0], 'n3':[1, 0], 'n4':[1, 0], 'n5':[1, 0], 'n6':[1, 0], 'n7':[1, 0],
+'o1':[1, 0], 'o2':[1, 0], 'o3':[1, 0], 'o4':[1, 0], 'o5':[1, 0], 'o6':[1, 0], 'o7':[1, 0]
 }
 
 
@@ -85,17 +85,19 @@ def drawGameTable():
 	for x in COORDX:
 		for y in COORDY:
 			position = x + y
-			if cardsPositions[POSITIONS[position]][1]: #if there is a card in #index1
-				print(POSITIONS[position], cardsPositions[POSITIONS[position]] , sep="", end=" ") #print the card
+			if tableOccupation[position][1]: #if there is a card in #index1
+				print(POSNAMES[position], tableOccupation[POSITIONS[position]]) #print the card
 				jump = 1
-			elif POSITIONS[position][:-2] != "card":
+			elif POSNAMES[position][:-2] != "card":
 			 	print("        X", end="")
 			 	jump = 1
-			if POSITIONS[position][:-2] == "card":
+			if POSNAMES[position][:-2] == "card":
 				jump = 0
 
 		if jump:
 			print("\n")
+
+
 def distributeCards():
 	pass
 
@@ -103,6 +105,39 @@ def cleanScreen():
 	"cleaning the screen"
 	os.system('cls')
 
+
+def newGame():
+	#clean the dictionnary variables to default
+	setDefault()
+	#copy a set of 52 cards
+	gameCards = CARDS
+
+	print("debug1:", gameCards)
+	#distribute the 52 cards in the table
+	for card in choice(gameCards):
+		gameCards.remove(card) #should I use pop instead ?
+		print(card, end=" ") 
+
+	print("debug2:", gameCards)
+	#display the table
+	drawGameTable()
+
+
+def setDefault():
+	"function who put the dictionnary to default values"
+
+	#set to None each card position
+	for key in cardsPositions:
+		cardsPositions[key] = None
+
+	#set 0 to each space occupation #index1
+	for key in tableOccupation:
+		tableOccupation[key][1] = 0
+
+
+def debugTest():
+	"function use to make tests"
+	pass
 
 # def cardNames():
 # 	"une fonction utilisé pour créer les noms des 52 cartes"
@@ -116,27 +151,19 @@ def cleanScreen():
 # 		c+=1
 # 	return cards
 
-# def positionsNames():
-#	"une fonction utilisé pour trouvé les noms rapidement de toutes les positions cards"
+# def posNames():
+#	"une fonction utilisé pour trouvé les noms rapidement de toutes les positions"
 # 	lettre = list("cdefghijklmno")
-# 	liste = []
-# 	liste2 = []
+# c = 1
+
+# for i in lettre:
+# 	while c < 8:
+# 		print("'"+i+str(c)+"':[1, 0],", end=" ")
+# 		c+=1
 # 	c = 1
-# 	for i in lettre:
-# 		while c < 8:
-# 			liste.append("'"+ i+ str(c)+"'"+ " : 'card"+i+str(c)+"',")
-# 			c+=1
-# 		c = 1
-# 	for i in liste:
-# 		print(i, end=" ")
-# 	for i in lettre:
-# 		while c < 8:
-# 			liste2.append("'card"+i+str(c)+"':[1, 0],")
-# 			c+=1
-# 		c = 1
-# 	for i in liste2:
-# 		print(i, end=" ")
+# 	print("\n")
 
 #program
+
 if __name__ == "__main__":
-	drawGameTable()
+	newGame()
