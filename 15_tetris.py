@@ -1,2 +1,2 @@
 # -*- coding:Utf-8 -*-
-'snake.py'
+'tetris.py'
