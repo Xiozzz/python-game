@@ -10,12 +10,13 @@
 - see isdigit/isalpha/isdecimal for checkers
 - more rows needed after 'i', from 'c' to 13 rows
 - dynamic card row, display only if there is card on it.
+- CHANGER PSNAMES et cardsPositions EN LISTE DE TUPLES ?? plus pratique pour utiliser dans les deux sens ? par exemple si je veux connaitre le nom de la carte en position d1 ?
 """
 
 #libraries
 import os
 from sys import exit
-from random import randint, choice
+from random import randint, shuffle
 
 #datas
 #all the differents cards of the game
@@ -86,10 +87,10 @@ def drawGameTable():
 		for y in COORDY:
 			position = x + y
 			if tableOccupation[position][1]: #if there is a card in #index1
-				print(POSNAMES[position], tableOccupation[POSITIONS[position]]) #print the card
+				print(POSNAMES[position], tableOccupation[position], end=" ") #print the card
 				jump = 1
 			elif POSNAMES[position][:-2] != "card":
-			 	print("        X", end="")
+			 	print("        X", end=" ")
 			 	jump = 1
 			if POSNAMES[position][:-2] == "card":
 				jump = 0
@@ -98,8 +99,15 @@ def drawGameTable():
 			print("\n")
 
 
-def distributeCards():
-	pass
+def distributeCard(card):
+	"distribute the card in the free socket"
+	sacks = ["a1", 'b2', 'b3','b4', 'b5', 'b6', 'b7'] #sacks where cards are distributed in the beginning
+
+	for sack in sacks:
+		if tableOccupation[sack][1] < tableOccupation[sack][0]: #check if their is free space for a card
+			 tableOccupation[sack][1] += 1
+			 cardsPositions[card] = sack
+			 break
 
 def cleanScreen():
 	"cleaning the screen"
@@ -109,19 +117,25 @@ def cleanScreen():
 def newGame():
 	#clean the dictionnary variables to default
 	setDefault()
+
 	#copy a set of 52 cards
-	gameCards = CARDS
+	gameCards = shuffleCopy(CARDS)
 
-	print("debug1:", gameCards)
 	#distribute the 52 cards in the table
-	for card in choice(gameCards):
-		gameCards.remove(card) #should I use pop instead ?
-		print(card, end=" ") 
+	for card in reversed(gameCards): #need to reverse the gameCards to have the expected iteration
+		distributeCard(card)
+		gameCards.remove(card)
 
-	print("debug2:", gameCards)
+	print(cardsPositions)
 	#display the table
 	drawGameTable()
 
+
+def shuffleCopy(CARDS):
+	#used to randomly shuffle cards
+	copy = CARDS[:]
+	shuffle(copy)
+	return copy
 
 def setDefault():
 	"function who put the dictionnary to default values"
