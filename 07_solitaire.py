@@ -10,7 +10,7 @@
 - see isdigit/isalpha/isdecimal for checkers
 - more rows needed after 'i', from 'c' to 13 rows
 - dynamic card row, display only if there is card on it.
-- CHANGER PSNAMES et cardsPositions EN LISTE DE TUPLES ?? plus pratique pour utiliser dans les deux sens ? par exemple si je veux connaitre le nom de la carte en position d1 ?
+- CHANGER cardsPositions EN LISTE DE TUPLES ?? plus pratique pour utiliser dans les deux sens ? par exemple si je veux connaitre le nom de la carte en position d1 ?
 """
 
 #libraries
@@ -19,6 +19,8 @@ from sys import exit
 from random import randint, shuffle
 
 #datas
+TITLE = "=========\nSOLITAIRE\n========="
+
 #all the differents cards of the game
 CARDS = [
 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9', 'A10', 'A11', 'A12', 'A13',
@@ -33,8 +35,8 @@ COORDY = list('1234567')
 
 #names of each position in the game table
 POSNAMES ={
-	'a1' : 'stackHide', 'a2' : 'stackView', 'a3' : 'freeSpace', 'a4' : 'cell1',	'a5' : 'cell2',	'a6' : 'cell3',	'a7' : 'cell4',
-	'b1' : 'minStack0', 'b2' : 'minStack1', 'b3' : 'minStack2', 'b4' : 'minStack3',	'b5' : 'minStack4', 'b6' : 'minStack5', 'b7' : 'minStack6',
+	'a1' : 'bigStk', 'a2' : 'cardVw', 'a3' : 'freeSp', 'a4' : 'cardC1',	'a5' : 'cardC2', 'a6' : 'cardC3', 'a7' : 'cardC4',
+	'b1' : 'stack0', 'b2' : 'stack1', 'b3' : 'stack2', 'b4' : 'stack3',	'b5' : 'stack4', 'b6' : 'stack5', 'b7' : 'stack6',
 	'c1' : 'cardc1', 'c2' : 'cardc2', 'c3' : 'cardc3', 'c4' : 'cardc4', 'c5' : 'cardc5', 'c6' : 'cardc6', 'c7' : 'cardc7',
 	'd1' : 'cardd1', 'd2' : 'cardd2', 'd3' : 'cardd3', 'd4' : 'cardd4', 'd5' : 'cardd5', 'd6' : 'cardd6', 'd7' : 'cardd7', 
 	'e1' : 'carde1', 'e2' : 'carde2', 'e3' : 'carde3', 'e4' : 'carde4', 'e5' : 'carde5', 'e6' : 'carde6', 'e7' : 'carde7', 
@@ -61,7 +63,7 @@ cardsPositions = {
 
 #occupation of each space 'name':[ #index0 numbers of cards max, #index1 numbers of cards now]
 tableOccupation = {
-'a1':[31, 0], 'a2':[31, 0], 'a3':[0, 0], 'a4':[13, 0], 'a5':[13, 0], 'a6':[13, 0], 'a7':[13, 0],
+'a1':[24, 0], 'a2':[31, 0], 'a3':[0, 0], 'a4':[13, 0], 'a5':[13, 0], 'a6':[13, 0], 'a7':[13, 0],
 'b1':[0, 0], 'b2':[1, 0], 'b3':[2, 0], 'b4':[3, 0], 'b5':[4, 0], 'b6':[5, 0], 'b7':[6, 0],
 'c1':[1, 0], 'c2':[1, 0], 'c3':[1, 0], 'c4':[1, 0], 'c5':[1, 0], 'c6':[1, 0], 'c7':[1, 0],
 'd1':[1, 0], 'd2':[1, 0], 'd3':[1, 0], 'd4':[1, 0], 'd5':[1, 0], 'd6':[1, 0], 'd7':[1, 0],
@@ -80,33 +82,39 @@ tableOccupation = {
 
 
 #functions
-def drawGameTable():
-	jump=0
-	print('\n')
+def displayTable():
+	"check occupation of the table and draw the game grid"
+	jump=1
+	print(TITLE, end="")
 	for x in COORDX:
+		if jump:
+			print("\n\n| ", end="")
+
 		for y in COORDY:
 			position = x + y
-			if tableOccupation[position][1]: #if there is a card in #index1
-				print(POSNAMES[position], tableOccupation[position], end=" ") #print the card
-				jump = 1
-			elif POSNAMES[position][:-2] != "card":
-			 	print("        X", end=" ")
-			 	jump = 1
-			if POSNAMES[position][:-2] == "card":
-				jump = 0
+			if tableOccupation[position][1] and POSNAMES[position][:-2] == "card":
+				print("CARD |", end=" ")
 
-		if jump:
-			print("\n")
+			elif tableOccupation[position][1]: #if there is a card in #index1
+				print("card hidden |", end=" ") #print the card
+
+			elif POSNAMES[position] != "card"+position:
+			 	print("no card  |", end=" ")
+
+			elif POSNAMES[position] == "card"+position:
+				jump = 0
 
 
 def distributeCard(card):
-	"distribute the card in the free socket"
-	sacks = ["a1", 'b2', 'b3','b4', 'b5', 'b6', 'b7'] #sacks where cards are distributed in the beginning
+	"distribute the card in a free socket" 
+
+	#sacks where cards are distributed in the beginning
+	sacks = ["a1", 'b2', 'b3','b4', 'b5', 'b6', 'b7', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7']
 
 	for sack in sacks:
 		if tableOccupation[sack][1] < tableOccupation[sack][0]: #check if their is free space for a card
-			 tableOccupation[sack][1] += 1
-			 cardsPositions[card] = sack
+			 tableOccupation[sack][1] += 1 #increment by one and take a free space
+			 cardsPositions[card] = sack #position of the card
 			 break
 
 def cleanScreen():
@@ -126,10 +134,15 @@ def newGame():
 		distributeCard(card)
 		gameCards.remove(card)
 
-	print(cardsPositions)
 	#display the table
-	drawGameTable()
+	displayTable()
 
+	#DEBUG TOOL
+	# for card in CARDS:
+	# 	findCard(card)
+
+def findCard(card):
+	print(card,'is in', POSNAMES[cardsPositions[card]])
 
 def shuffleCopy(CARDS):
 	#used to randomly shuffle cards
@@ -151,6 +164,10 @@ def setDefault():
 
 def debugTest():
 	"function use to make tests"
+	pass
+
+def menu():
+	"start a new game or quit"
 	pass
 
 # def cardNames():
