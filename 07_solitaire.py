@@ -29,37 +29,41 @@ CARDS = [
 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13'
 ]
 
+POSITIONS = [] # à créer a1, a2 etc..
+
 #coordinates of the game table
 COORDX = list('abcdefghijklmno')
 COORDY = list('1234567')
 
 #names of each position in the game table
 POSNAMES ={
-	'a1' : 'bigStk', 'a2' : 'cardVw', 'a3' : 'freeSp', 'a4' : 'cardC1',	'a5' : 'cardC2', 'a6' : 'cardC3', 'a7' : 'cardC4',
-	'b1' : 'stack0', 'b2' : 'stack1', 'b3' : 'stack2', 'b4' : 'stack3',	'b5' : 'stack4', 'b6' : 'stack5', 'b7' : 'stack6',
-	'c1' : 'cardc1', 'c2' : 'cardc2', 'c3' : 'cardc3', 'c4' : 'cardc4', 'c5' : 'cardc5', 'c6' : 'cardc6', 'c7' : 'cardc7',
-	'd1' : 'cardd1', 'd2' : 'cardd2', 'd3' : 'cardd3', 'd4' : 'cardd4', 'd5' : 'cardd5', 'd6' : 'cardd6', 'd7' : 'cardd7', 
-	'e1' : 'carde1', 'e2' : 'carde2', 'e3' : 'carde3', 'e4' : 'carde4', 'e5' : 'carde5', 'e6' : 'carde6', 'e7' : 'carde7', 
-	'f1' : 'cardf1', 'f2' : 'cardf2', 'f3' : 'cardf3', 'f4' : 'cardf4', 'f5' : 'cardf5', 'f6' : 'cardf6', 'f7' : 'cardf7', 
-	'g1' : 'cardg1', 'g2' : 'cardg2', 'g3' : 'cardg3', 'g4' : 'cardg4', 'g5' : 'cardg5', 'g6' : 'cardg6', 'g7' : 'cardg7', 
-	'h1' : 'cardh1', 'h2' : 'cardh2', 'h3' : 'cardh3', 'h4' : 'cardh4', 'h5' : 'cardh5', 'h6' : 'cardh6', 'h7' : 'cardh7', 
-	'i1' : 'cardi1', 'i2' : 'cardi2', 'i3' : 'cardi3', 'i4' : 'cardi4', 'i5' : 'cardi5', 'i6' : 'cardi6', 'i7' : 'cardi7', 
-	'j1' : 'cardj1', 'j2' : 'cardj2', 'j3' : 'cardj3', 'j4' : 'cardj4', 'j5' : 'cardj5', 'j6' : 'cardj6', 'j7' : 'cardj7', 
-	'k1' : 'cardk1', 'k2' : 'cardk2', 'k3' : 'cardk3', 'k4' : 'cardk4', 'k5' : 'cardk5', 'k6' : 'cardk6', 'k7' : 'cardk7', 
-	'l1' : 'cardl1', 'l2' : 'cardl2', 'l3' : 'cardl3', 'l4' : 'cardl4', 'l5' : 'cardl5', 'l6' : 'cardl6', 'l7' : 'cardl7', 
-	'm1' : 'cardm1', 'm2' : 'cardm2', 'm3' : 'cardm3', 'm4' : 'cardm4', 'm5' : 'cardm5', 'm6' : 'cardm6', 'm7' : 'cardm7', 
-	'n1' : 'cardn1', 'n2' : 'cardn2', 'n3' : 'cardn3', 'n4' : 'cardn4', 'n5' : 'cardn5', 'n6' : 'cardn6', 'n7' : 'cardn7', 
-	'o1' : 'cardo1', 'o2' : 'cardo2', 'o3' : 'cardo3', 'o4' : 'cardo4', 'o5' : 'cardo5', 'o6' : 'cardo6', 'o7' : 'cardo7'
+'a1' : 'bigStk', 'a2' : 'cardVw', 'a3' : 'freeSp', 'a4' : 'cardC1',	'a5' : 'cardC2', 'a6' : 'cardC3', 'a7' : 'cardC4',
+'b1' : 'stack0', 'b2' : 'stack1', 'b3' : 'stack2', 'b4' : 'stack3',	'b5' : 'stack4', 'b6' : 'stack5', 'b7' : 'stack6',
+'c1' : 'cardc1', 'c2' : 'cardc2', 'c3' : 'cardc3', 'c4' : 'cardc4', 'c5' : 'cardc5', 'c6' : 'cardc6', 'c7' : 'cardc7',
+'d1' : 'cardd1', 'd2' : 'cardd2', 'd3' : 'cardd3', 'd4' : 'cardd4', 'd5' : 'cardd5', 'd6' : 'cardd6', 'd7' : 'cardd7', 
+'e1' : 'carde1', 'e2' : 'carde2', 'e3' : 'carde3', 'e4' : 'carde4', 'e5' : 'carde5', 'e6' : 'carde6', 'e7' : 'carde7', 
+'f1' : 'cardf1', 'f2' : 'cardf2', 'f3' : 'cardf3', 'f4' : 'cardf4', 'f5' : 'cardf5', 'f6' : 'cardf6', 'f7' : 'cardf7', 
+'g1' : 'cardg1', 'g2' : 'cardg2', 'g3' : 'cardg3', 'g4' : 'cardg4', 'g5' : 'cardg5', 'g6' : 'cardg6', 'g7' : 'cardg7', 
+'h1' : 'cardh1', 'h2' : 'cardh2', 'h3' : 'cardh3', 'h4' : 'cardh4', 'h5' : 'cardh5', 'h6' : 'cardh6', 'h7' : 'cardh7', 
+'i1' : 'cardi1', 'i2' : 'cardi2', 'i3' : 'cardi3', 'i4' : 'cardi4', 'i5' : 'cardi5', 'i6' : 'cardi6', 'i7' : 'cardi7', 
+'j1' : 'cardj1', 'j2' : 'cardj2', 'j3' : 'cardj3', 'j4' : 'cardj4', 'j5' : 'cardj5', 'j6' : 'cardj6', 'j7' : 'cardj7', 
+'k1' : 'cardk1', 'k2' : 'cardk2', 'k3' : 'cardk3', 'k4' : 'cardk4', 'k5' : 'cardk5', 'k6' : 'cardk6', 'k7' : 'cardk7', 
+'l1' : 'cardl1', 'l2' : 'cardl2', 'l3' : 'cardl3', 'l4' : 'cardl4', 'l5' : 'cardl5', 'l6' : 'cardl6', 'l7' : 'cardl7', 
+'m1' : 'cardm1', 'm2' : 'cardm2', 'm3' : 'cardm3', 'm4' : 'cardm4', 'm5' : 'cardm5', 'm6' : 'cardm6', 'm7' : 'cardm7', 
+'n1' : 'cardn1', 'n2' : 'cardn2', 'n3' : 'cardn3', 'n4' : 'cardn4', 'n5' : 'cardn5', 'n6' : 'cardn6', 'n7' : 'cardn7', 
+'o1' : 'cardo1', 'o2' : 'cardo2', 'o3' : 'cardo3', 'o4' : 'cardo4', 'o5' : 'cardo5', 'o6' : 'cardo6', 'o7' : 'cardo7'
 }
 
 #variables
 #where are positioned each cards
-cardsPositions = {
-'A1':None, 'A2':None, 'A3':None, 'A4':None, 'A5':None, 'A6':None, 'A7':None, 'A8':None, 'A9':None, 'A10':None, 'A11':None, 'A12':None, 'A13':None,
-'B1':None, 'B2':None, 'B3':None, 'B4':None, 'B5':None, 'B6':None, 'B7':None, 'B8':None, 'B9':None, 'B10':None, 'B11':None, 'B12':None, 'B13':None,
-'C1':None, 'C2':None, 'C3':None, 'C4':None, 'C5':None, 'C6':None, 'C7':None, 'C8':None, 'C9':None, 'C10':None, 'C11':None, 'C12':None, 'C13':None,
-'D1':None, 'D2':None, 'D3':None, 'D4':None, 'D5':None, 'D6':None, 'D7':None, 'D8':None, 'D9':None, 'D10':None, 'D11':None, 'D12':None, 'D13':None
-}
+cardsPositions  = [
+['A1', None], ['A2', None], ['A3', None], ['A4', None], ['A5', None], ['A6', None], ['A7', None], ['A8', None], ['A9', None], ['A10', None], ['A11', None], ['A12', None], ['A13', None],
+['B1', None], ['B2', None], ['B3', None], ['B4', None], ['B5', None], ['B6', None], ['B7', None], ['B8', None], ['B9', None], ['B10', None], ['B11', None], ['B12', None], ['B13', None],
+['C1', None], ['C2', None], ['C3', None], ['C4', None], ['C5', None], ['C6', None], ['C7', None], ['C8', None], ['C9', None], ['C10', None], ['C11', None], ['C12', None], ['C13', None],
+['D1', None], ['D2', None], ['D3', None], ['D4', None], ['D5', None], ['D6', None], ['D7', None], ['D8', None], ['D9', None], ['D10', None], ['D11', None], ['D12', None], ['D13', None]
+]
+
+
 
 #occupation of each space 'name':[ #index0 numbers of cards max, #index1 numbers of cards now]
 tableOccupation = {
@@ -114,7 +118,9 @@ def distributeCard(card):
 	for sack in sacks:
 		if tableOccupation[sack][1] < tableOccupation[sack][0]: #check if their is free space for a card
 			 tableOccupation[sack][1] += 1 #increment by one and take a free space
-			 cardsPositions[card] = sack #position of the card
+			 for cardPos in cardsPositions:
+			 	if cardPos[0] == card:
+			 		cardPos[1] = sack
 			 break
 
 def cleanScreen():
@@ -138,11 +144,15 @@ def newGame():
 	displayTable()
 
 	#DEBUG TOOL
-	# for card in CARDS:
-	# 	findCard(card)
+	findCardPos(position="a1")
 
-def findCard(card):
-	print(card,'is in', POSNAMES[cardsPositions[card]])
+def findCardPos(card=None, position=None):
+	"used to find the card or the position in list cardPositions"
+	for cardPos in cardsPositions:
+		if position == cardPos[1]:
+			print("index de la position :", cardsPositions.index(cardPos), "card", cardPos[0])
+		if card == cardPos[0]:
+			print("index de la carte :", card, cardsPositions.index(cardPos), "position", cardPos[1])
 
 def shuffleCopy(CARDS):
 	#used to randomly shuffle cards
@@ -154,8 +164,8 @@ def setDefault():
 	"function who put the dictionnary to default values"
 
 	#set to None each card position
-	for key in cardsPositions:
-		cardsPositions[key] = None
+	for cardPos in cardsPositions:
+		cardPos[1] = None
 
 	#set 0 to each space occupation #index1
 	for key in tableOccupation:
