@@ -195,29 +195,6 @@ def menu():
 	"start a new game or quit"
 	pass
 
-# def cardNames():
-# 	"une fonction utilisé pour créer les noms des 52 cartes"
-# 	c = 1
-# 	cards = {'A':[], 'B':[], 'C':[], 'D':[]}
-# 	while c <= 13:
-# 		cards['A'].append("A"+str(c))
-# 		cards['B'].append("B"+str(c))
-# 		cards['C'].append("C"+str(c))
-# 		cards['D'].append("D"+str(c))
-# 		c+=1
-# 	return cards
-
-# def posNames():
-#	"une fonction utilisé pour trouvé les noms rapidement de toutes les positions"
-# 	lettre = list("cdefghijklmno")
-# c = 1
-
-# for i in lettre:
-# 	while c < 8:
-# 		print("'"+i+str(c)+"':[1, 0],", end=" ")
-# 		c+=1
-# 	c = 1
-# 	print("\n")
 
 #program
 
