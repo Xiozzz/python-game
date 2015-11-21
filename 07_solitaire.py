@@ -29,7 +29,23 @@ CARDS = [
 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13'
 ]
 
-POSITIONS = [] # à créer a1, a2 etc..
+POSITIONS = [
+'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7',
+'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7',
+'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7',
+'d1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7',
+'e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7',
+'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7',
+'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7',
+'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7',
+'i1', 'i2', 'i3', 'i4', 'i5', 'i6', 'i7',
+'j1', 'j2', 'j3', 'j4', 'j5', 'j6', 'j7',
+'k1', 'k2', 'k3', 'k4', 'k5', 'k6', 'k7',
+'l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7',
+'m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7',
+'n1', 'n2', 'n3', 'n4', 'n5', 'n6', 'n7',
+'o1', 'o2', 'o3', 'o4', 'o5', 'o6', 'o7'
+]
 
 #coordinates of the game table
 COORDX = list('abcdefghijklmno')
@@ -62,7 +78,6 @@ cardsPositions  = [
 ['C1', None], ['C2', None], ['C3', None], ['C4', None], ['C5', None], ['C6', None], ['C7', None], ['C8', None], ['C9', None], ['C10', None], ['C11', None], ['C12', None], ['C13', None],
 ['D1', None], ['D2', None], ['D3', None], ['D4', None], ['D5', None], ['D6', None], ['D7', None], ['D8', None], ['D9', None], ['D10', None], ['D11', None], ['D12', None], ['D13', None]
 ]
-
 
 
 #occupation of each space 'name':[ #index0 numbers of cards max, #index1 numbers of cards now]
