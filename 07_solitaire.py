@@ -1,25 +1,13 @@
 # -*- coding: utf-8 -*-
 #Text based solitaire game using a grid, row/col, to place number
 
-"""
-- (instead of classical playing card, I just use numbers and letters)
-- four cells to fill, A, B, C, D*
-- one stack of hiden cards and one cell for the card we check
-- seven cascades, with each, hidden cards
-- 13 * 4 = 52 cards (Ex: 1A, 2A, 12C, 13D, 11A, 9B, etc)
-- see isdigit/isalpha/isdecimal for checkers
-- more rows needed after 'i', from 'c' to 13 rows
-- dynamic card row, display only if there is card on it.
-- CHANGER cardsPositions EN LISTE DE TUPLES ?? plus pratique pour utiliser dans les deux sens ? par exemple si je veux connaitre le nom de la carte en position d1 ?
-"""
-
 #libraries
 import os
 from sys import exit
 from random import randint, shuffle
 
 #datas
-TITLE = "=========\nSOLITAIRE\n========="
+TITLE = "\n\t\t=========\n\t\tSOLITAIRE\n\t\t========="
 
 #all the differents cards of the game
 CARDS = [
@@ -70,6 +58,29 @@ POSNAMES ={
 'o1' : 'cardo1', 'o2' : 'cardo2', 'o3' : 'cardo3', 'o4' : 'cardo4', 'o5' : 'cardo5', 'o6' : 'cardo6', 'o7' : 'cardo7'
 }
 
+TEXTS = [
+"What do you want to do?",
+"1. Start a New Game?",
+"2. Quit",
+"(W)atch. Watch a card from a stack",
+"(M)ove. Move a card",
+"(H)elp. Read the rules"
+]
+
+RULES = """
+When the game start, there is 52 cards hidden, there is 4 family (A, B, C, D) and each family have 13 members.
+The cards are distributed randomly on the game table.
+31 cards are in the big stack in position a1, 6 cards are in position b7, 5 in b6, 4 in b5, 3 in b4, 2 in b3 and 1 in b2.
+You can choose to watch a card from one of the stacks, the card will appear next to the stack you have chosen.
+For the big stack you can continue to watch all the cards as much as you want, there is a rotation, 
+but for the others stack, you can watch a card only if the space under is free.
+You can move the cards in any column starting from line c. But to put a card under an other one, the
+card must be of value one less than the one up on the column.
+You can also move the cards to the cells a4, a5, a6, a7 and class them together by family. And must start
+with the first card (A1, B1, C1 ou D1), once a cell have been filled with a first card, the cell stick to this 
+family.
+"""
+
 #variables
 #where are positioned each cards
 cardsPositions  = [
@@ -82,7 +93,7 @@ cardsPositions  = [
 
 #occupation of each space 'name':[ #index0 numbers of cards max, #index1 numbers of cards now]
 tableOccupation = {
-'a1':[24, 0], 'a2':[31, 0], 'a3':[0, 0], 'a4':[13, 0], 'a5':[13, 0], 'a6':[13, 0], 'a7':[13, 0],
+'a1':[31, 0], 'a2':[31, 0], 'a3':[0, 0], 'a4':[13, 0], 'a5':[13, 0], 'a6':[13, 0], 'a7':[13, 0],
 'b1':[0, 0], 'b2':[1, 0], 'b3':[2, 0], 'b4':[3, 0], 'b5':[4, 0], 'b6':[5, 0], 'b7':[6, 0],
 'c1':[1, 0], 'c2':[1, 0], 'c3':[1, 0], 'c4':[1, 0], 'c5':[1, 0], 'c6':[1, 0], 'c7':[1, 0],
 'd1':[1, 0], 'd2':[1, 0], 'd3':[1, 0], 'd4':[1, 0], 'd5':[1, 0], 'd6':[1, 0], 'd7':[1, 0],
@@ -104,31 +115,36 @@ tableOccupation = {
 def displayTable():
 	"check occupation of the table and draw the game grid"
 	jump=1
-	print(TITLE, end="")
+	print(TITLE)
+
+	print("\n", end="    ")
+	for y in COORDY:
+		print(y+"  |  ", end="")
+
 	for x in COORDX:
 		if jump:
-			print("\n\n| ", end="")
+			print("\n\n"+x+"| ", end="")
 
 		for y in COORDY:
 			position = x + y
 			if tableOccupation[position][1] and POSNAMES[position][:-2] == "card":
-				print("CARD |", end=" ")
+				print("Crd |", end=" ")
 
 			elif tableOccupation[position][1]: #if there is a card in #index1
-				print("card hidden |", end=" ") #print the card
+				print("Stk |", end=" ") #print the card
 
 			elif POSNAMES[position] != "card"+position:
-			 	print("no card  |", end=" ")
+			 	print("NoC |", end=" ")
 
 			elif POSNAMES[position] == "card"+position:
 				jump = 0
-
+	print("\n\n============================================")
 
 def distributeCard(card):
 	"distribute the card in a free socket" 
 
 	#sacks where cards are distributed in the beginning
-	sacks = ["a1", 'b2', 'b3','b4', 'b5', 'b6', 'b7', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7']
+	sacks = ["a1", 'b2', 'b3','b4', 'b5', 'b6', 'b7']
 
 	for sack in sacks:
 		if tableOccupation[sack][1] < tableOccupation[sack][0]: #check if their is free space for a card
@@ -156,10 +172,29 @@ def newGame():
 		gameCards.remove(card)
 
 	#display the table
-	displayTable()
+	game()
 
-	#DEBUG TOOL
-	findCardPos(position="a1")
+	#DEBUG TOOLS
+	print(cardsPositions)
+	#findCardPos(position="a1")
+
+def game():
+	"main loop of the game"
+	action = "Play"
+
+	while action:
+		#update the table display
+		displayTable()
+		#ask player for a command
+		action = question()
+
+		#1. see a card from a stack
+		#2. move a card
+
+def question():
+	"ask the player for an action"
+	print(TEXTS[0])
+	return False
 
 def findCardPos(card=None, position=None):
 	"used to find the card or the position in list cardPositions"
