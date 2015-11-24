@@ -3,11 +3,12 @@
 
 #libraries
 import os
-from sys import exit
+import sys
 from random import randint, shuffle
 
 #datas
 TITLE = "\n\t\t=========\n\t\tSOLITAIRE\n\t\t========="
+INTRO = "Welcome in the Solitaire Game"
 
 #all the differents cards of the game
 CARDS = [
@@ -62,9 +63,12 @@ TEXTS = [
 "What do you want to do?",
 "1. Start a New Game?",
 "2. Quit",
-"(W)atch. Watch a card from a stack",
-"(M)ove. Move a card",
-"(H)elp. Read the rules"
+"1. (W)atch. Watch a card from a stack",
+"2. (M)ove. Move a card",
+"3. (H)elp. Read the rules",
+"1. Choose by coordinates",
+"2. Choose by card name",
+"---"
 ]
 
 RULES = """
@@ -109,6 +113,8 @@ tableOccupation = {
 'n1':[1, 0], 'n2':[1, 0], 'n3':[1, 0], 'n4':[1, 0], 'n5':[1, 0], 'n6':[1, 0], 'n7':[1, 0],
 'o1':[1, 0], 'o2':[1, 0], 'o3':[1, 0], 'o4':[1, 0], 'o5':[1, 0], 'o6':[1, 0], 'o7':[1, 0]
 }
+
+flagQuestion = ""
 
 
 #functions
@@ -158,8 +164,8 @@ def cleanScreen():
 	"cleaning the screen"
 	os.system('cls')
 
-
 def newGame():
+	"set a new game and start"
 	#clean the dictionnary variables to default
 	setDefault()
 
@@ -175,7 +181,7 @@ def newGame():
 	game()
 
 	#DEBUG TOOLS
-	print(cardsPositions)
+	# print(cardsPositions)
 	#findCardPos(position="a1")
 
 def game():
@@ -184,17 +190,67 @@ def game():
 
 	while action:
 		#update the table display
+		cleanScreen()
 		displayTable()
-		#ask player for a command
-		action = question()
 
+		#ask player for a command
 		#1. see a card from a stack
 		#2. move a card
+		action = question(0, 3, 4, "action")
 
-def question():
+		#if move is chosen, ask for coordinate to move to ?
+		if action in ["move", "m", "2"]: 
+			#ask player for a coordinate a1 or 1a, whatever or the card name (visible)
+			mofrom = question(0, 6, 7, "coordinate")
+			moveto = question(0, 6, 8, "movement") #move the card to coordinate if possible
+		if action in ["watch", "w", "1"]: #show the card from stack if possible
+			watch = question(0, 6, 8, "movement")
+			
+
+		#check if table if cells are complete and game finished, if yes, victory and break loop
+
+	#the game is finished, return to menu
+	menu()
+
+
+def question(a, b, c, f):
 	"ask the player for an action"
-	print(TEXTS[0])
-	return False
+	global flagQuestion
+	flagQuestion = f
+	print("\n", TEXTS[a],"\n========================\n")
+	print(TEXTS[b])
+	print(TEXTS[c])
+	print(TEXTS[5])
+
+	while True:
+		answer = input(">>>")
+		check = checkAnswer(answer)
+		if check:
+			return answer.lower()
+		else:
+			print("Your answer is not valid.")
+
+def checkAnswer(answer):
+	"check if the answer is correct and return accordingly"
+	
+	if answer.lower() in ['h', 'help', '3']:
+		return True
+
+	if flagQuestion == "menu":
+		if answer.lower() in ['1', 'start', '2', 'q', 'quit']:
+			return True
+
+	if flagQuestion == "action":
+		if answer.lower() in ['w', 'watch', '1', 'm', 'move' , '2']:
+			return True
+
+	#check if it is good coordinates
+	if  flagQuestion == "coordinate":
+		return True
+
+	if  flagQuestion == "movement":
+		return True
+
 
 def findCardPos(card=None, position=None):
 	"used to find the card or the position in list cardPositions"
@@ -228,10 +284,16 @@ def debugTest():
 
 def menu():
 	"start a new game or quit"
-	pass
+	cleanScreen()
+	print(INTRO)
+	action = question(0, 1, 2, "menu")
 
+	if action == "1" or action == "start":
+		newGame()
+	else:
+		sys.exit()
 
 #program
 
 if __name__ == "__main__":
-	newGame()
+	menu()
