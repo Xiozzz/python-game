@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 #Text based solitaire game using a grid, row/col, to place number
 
+"""
+maybe the flag and if statement is not useful in checkCoords
+"""
+
 #libraries
 import os
 import sys
@@ -12,10 +16,10 @@ INTRO = "Welcome in the Solitaire Game"
 
 #all the differents cards of the game
 CARDS = [
-'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9', 'A10', 'A11', 'A12', 'A13',
-'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9', 'B10', 'B11', 'B12', 'B13',
-'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13',
-'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13'
+'A01', 'A02', 'A03', 'A04', 'A05', 'A06', 'A07', 'A08', 'A09', 'A10', 'A11', 'A12', 'A13',
+'B01', 'B02', 'B03', 'B04', 'B05', 'B06', 'B07', 'B08', 'B09', 'B10', 'B11', 'B12', 'B13',
+'C01', 'C02', 'C03', 'C04', 'C05', 'C06', 'C07', 'C08', 'C09', 'C10', 'C11', 'C12', 'C13',
+'D01', 'D02', 'D03', 'D04', 'D05', 'D06', 'D07', 'D08', 'D09', 'D10', 'D11', 'D12', 'D13'
 ]
 
 POSITIONS = [
@@ -66,9 +70,9 @@ TEXTS = [
 "1. (W)atch. Watch a card from a stack",
 "2. (M)ove. Move a card",
 "3. (H)elp. Read the rules",
-"1. Choose by coordinates",
-"2. Choose by card name",
-"---"
+"Please give the coordinates of the stack you want to watch a card.",
+"Please give the coordinates or the name of the card you wish to move.",
+"Please give the coordinates where you wish your card to be moved."
 ]
 
 RULES = """
@@ -113,9 +117,6 @@ tableOccupation = {
 'n1':[1, 0], 'n2':[1, 0], 'n3':[1, 0], 'n4':[1, 0], 'n5':[1, 0], 'n6':[1, 0], 'n7':[1, 0],
 'o1':[1, 0], 'o2':[1, 0], 'o3':[1, 0], 'o4':[1, 0], 'o5':[1, 0], 'o6':[1, 0], 'o7':[1, 0]
 }
-
-flagQuestion = ""
-
 
 #functions
 def displayTable():
@@ -194,62 +195,91 @@ def game():
 		displayTable()
 
 		#ask player for a command
-		#1. see a card from a stack
-		#2. move a card
 		action = question(0, 3, 4, "action")
 
-		#if move is chosen, ask for coordinate to move to ?
+		#1. see a card from a stack
+		if action in ["watch", "w", "1"]: #show the card from stack if possible
+			watch = coordInput(6, "watch")
+		
+		#2. move a card
 		if action in ["move", "m", "2"]: 
 			#ask player for a coordinate a1 or 1a, whatever or the card name (visible)
-			mofrom = question(0, 6, 7, "coordinate")
-			moveto = question(0, 6, 8, "movement") #move the card to coordinate if possible
-		if action in ["watch", "w", "1"]: #show the card from stack if possible
-			watch = question(0, 6, 8, "movement")
+			mofrom = coordInput(7, "move1")
+			moveto = coordInput(8, "move2") #move the card to coordinate if possible
+		
+
+
 			
 
 		#check if table if cells are complete and game finished, if yes, victory and break loop
+		# if win, action = false
 
-	#the game is finished, return to menu
+	#the game is finished, restart menu
+	input("The game is finished, press <Enter> to go to menu.")
 	menu()
 
 
 def question(a, b, c, f):
 	"ask the player for an action"
-	global flagQuestion
-	flagQuestion = f
+	flag = f
 	print("\n", TEXTS[a],"\n========================\n")
 	print(TEXTS[b])
 	print(TEXTS[c])
 	print(TEXTS[5])
 
 	while True:
-		answer = input(">>>")
-		check = checkAnswer(answer)
+		answer = input(">>>").lower()
+		check = checkAnswer(answer, flag)
 		if check:
-			return answer.lower()
+			return answer
 		else:
 			print("Your answer is not valid.")
 
-def checkAnswer(answer):
+def checkAnswer(answer, flag):
 	"check if the answer is correct and return accordingly"
 	
-	if answer.lower() in ['h', 'help', '3']:
+	if answer in ['h', 'help', '3']:
+		help()
 		return True
 
-	if flagQuestion == "menu":
-		if answer.lower() in ['1', 'start', '2', 'q', 'quit']:
+	if flag == "menu":
+		if answer in ['1', 'start', '2', 'q', 'quit', 'new', 's', 'n']:
 			return True
 
-	if flagQuestion == "action":
-		if answer.lower() in ['w', 'watch', '1', 'm', 'move' , '2']:
+	if flag == "action":
+		if answer in ['w', 'watch', '1', 'm', 'move' , '2']:
 			return True
 
-	#check if it is good coordinates
-	if  flagQuestion == "coordinate":
+def coordInput(a, f):
+	"ask in and check if it is good coordinates"
+	flag = f
+	print(TEXTS[a])
+
+	if  flag == "watch":
+		input()
+		checkCoords()
 		return True
 
-	if  flagQuestion == "movement":
+	if  flag == "move1":
+		input()
+		checkCoords()
 		return True
+
+	if  flag == "move2":
+		input()
+		checkCoords()
+		return True
+
+def checkCoords():
+	"check if coords or card name is valid"
+	pass
+
+
+
+def help():
+	"help screen"
+	print(RULES)
+	input("<Enter> to continue")
 
 
 def findCardPos(card=None, position=None):
@@ -288,12 +318,15 @@ def menu():
 	print(INTRO)
 	action = question(0, 1, 2, "menu")
 
-	if action == "1" or action == "start":
+	if action in ['1', 'start', 'new', 's', 'n']:
 		newGame()
+	if action in ['h', 'help', '3']:
+		menu()
 	else:
 		sys.exit()
 
 #program
 
 if __name__ == "__main__":
-	menu()
+	# menu()
+	newGame()
