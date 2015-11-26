@@ -72,7 +72,8 @@ TEXTS = [
 "3. (H)elp. Read the rules",
 "Please give the coordinates of the stack you want to watch a card.",
 "Please give the coordinates or the name of the card you wish to move.",
-"Please give the coordinates where you wish your card to be moved."
+"Please give the coordinates where you wish your card to be moved.",
+"This answer is not valid."
 ]
 
 RULES = """
@@ -200,15 +201,18 @@ def game():
 		#1. see a card from a stack
 		if action in ["watch", "w", "1"]: #show the card from stack if possible
 			watch = coordInput(6, "watch")
+			print(watch)
 		
 		#2. move a card
 		if action in ["move", "m", "2"]: 
 			#ask player for a coordinate a1 or 1a, whatever or the card name (visible)
-			mofrom = coordInput(7, "move1")
-			moveto = coordInput(8, "move2") #move the card to coordinate if possible
-		
+			moveFrom = coordInput(7, "moveFrom")
+			#move the card to coordinate if possible
+			moveTo = coordInput(8, "moveTo") 
+			print(moveFrom, moveTo)
 
-
+		#debug tools
+		input("DEBUG MODE")
 			
 
 		#check if table if cells are complete and game finished, if yes, victory and break loop
@@ -217,7 +221,6 @@ def game():
 	#the game is finished, restart menu
 	input("The game is finished, press <Enter> to go to menu.")
 	menu()
-
 
 def question(a, b, c, f):
 	"ask the player for an action"
@@ -233,7 +236,7 @@ def question(a, b, c, f):
 		if check:
 			return answer
 		else:
-			print("Your answer is not valid.")
+			print(TEXTS[9])
 
 def checkAnswer(answer, flag):
 	"check if the answer is correct and return accordingly"
@@ -250,37 +253,37 @@ def checkAnswer(answer, flag):
 		if answer in ['w', 'watch', '1', 'm', 'move' , '2']:
 			return True
 
-def coordInput(a, f):
+def coordInput(a, action):
 	"ask in and check if it is good coordinates"
-	flag = f
 	print(TEXTS[a])
+	userInput = input('>>>')
+	while True:
+		if checkCoords(userInput, action): #if coords valid
+			return userInput
+		else:
+			print(TEXTS[9])
+			print(TEXTS[a])
+			userInput = input('>>>')
 
-	if  flag == "watch":
-		input()
-		checkCoords()
-		return True
-
-	if  flag == "move1":
-		input()
-		checkCoords()
-		return True
-
-	if  flag == "move2":
-		input()
-		checkCoords()
-		return True
-
-def checkCoords():
+def checkCoords(userInput, action):
 	"check if coords or card name is valid"
-	pass
 
+	for coord in POSITIONS:
+		if coord == userInput:
+			return True
+		if coord[::-1] == userInput: #reversed sting, 1a, 7i, ...works
+			return True
 
+	for name in CARDS:
+		if name == userInput and action == "moveFrom":
+			return True
+	
+	return False
 
 def help():
 	"help screen"
 	print(RULES)
 	input("<Enter> to continue")
-
 
 def findCardPos(card=None, position=None):
 	"used to find the card or the position in list cardPositions"
@@ -306,7 +309,6 @@ def setDefault():
 	#set 0 to each space occupation #index1
 	for key in tableOccupation:
 		tableOccupation[key][1] = 0
-
 
 def debugTest():
 	"function use to make tests"
