@@ -2,7 +2,7 @@
 #Text based solitaire game using a grid, row/col, to place number
 
 """
-maybe the flag and if statement is not useful in checkCoords
+distributeCard function broken
 """
 
 #libraries
@@ -93,10 +93,10 @@ family.
 #variables
 #where are positioned each cards
 cardsPositions  = [
-['A1', None], ['A2', None], ['A3', None], ['A4', None], ['A5', None], ['A6', None], ['A7', None], ['A8', None], ['A9', None], ['A10', None], ['A11', None], ['A12', None], ['A13', None],
-['B1', None], ['B2', None], ['B3', None], ['B4', None], ['B5', None], ['B6', None], ['B7', None], ['B8', None], ['B9', None], ['B10', None], ['B11', None], ['B12', None], ['B13', None],
-['C1', None], ['C2', None], ['C3', None], ['C4', None], ['C5', None], ['C6', None], ['C7', None], ['C8', None], ['C9', None], ['C10', None], ['C11', None], ['C12', None], ['C13', None],
-['D1', None], ['D2', None], ['D3', None], ['D4', None], ['D5', None], ['D6', None], ['D7', None], ['D8', None], ['D9', None], ['D10', None], ['D11', None], ['D12', None], ['D13', None]
+['A01', None], ['A02', None], ['A03', None], ['A04', None], ['A05', None], ['A06', None], ['A07', None], ['A08', None], ['A09', None], ['A10', None], ['A11', None], ['A12', None], ['A13', None],
+['B01', None], ['B02', None], ['B03', None], ['B04', None], ['B05', None], ['B06', None], ['B07', None], ['B08', None], ['B09', None], ['B10', None], ['B11', None], ['B12', None], ['B13', None],
+['C01', None], ['C02', None], ['C03', None], ['C04', None], ['C05', None], ['C06', None], ['C07', None], ['C08', None], ['C09', None], ['C10', None], ['C11', None], ['C12', None], ['C13', None],
+['D01', None], ['D02', None], ['D03', None], ['D04', None], ['D05', None], ['D06', None], ['D07', None], ['D08', None], ['D09', None], ['D10', None], ['D11', None], ['D12', None], ['D13', None]
 ]
 
 
@@ -148,19 +148,27 @@ def displayTable():
 				jump = 0
 	print("\n\n============================================")
 
-def distributeCard(card):
+def distributeCard(cards):
 	"distribute the card in a free socket" 
 
 	#sacks where cards are distributed in the beginning
 	sacks = ["a1", 'b2', 'b3','b4', 'b5', 'b6', 'b7']
+	c = 0
 
+	while c < 52:
+		for sack in sacks:
+			if tableOccupation[sack][1] < tableOccupation[sack][0]:  #check if their is free space for a card
+				tableOccupation[sack][1] += 1 #increment by one and take a free space
+				c += 1
+				for cardPos in cardsPositions:
+					if cardPos[0] == cards[c]:
+						cardPos[1] = sack
+						print(cardPos)
+		
+
+	#debug
 	for sack in sacks:
-		if tableOccupation[sack][1] < tableOccupation[sack][0]: #check if their is free space for a card
-			 tableOccupation[sack][1] += 1 #increment by one and take a free space
-			 for cardPos in cardsPositions:
-			 	if cardPos[0] == card:
-			 		cardPos[1] = sack
-			 break
+		print(tableOccupation[sack])
 
 def cleanScreen():
 	"cleaning the screen"
@@ -173,18 +181,17 @@ def newGame():
 
 	#copy a set of 52 cards
 	gameCards = shuffleCopy(CARDS)
-
+	print("GAMECARDS:", gameCards)
 	#distribute the 52 cards in the table
-	for card in reversed(gameCards): #need to reverse the gameCards to have the expected iteration
-		distributeCard(card)
-		gameCards.remove(card)
+	distributeCard(gameCards)
+	print(cardsPositions)
+	#DEBUG TOOLS
+	# findCardPos(position="a1")
+	input("DEBUG TOOLS")
 
 	#display the table
 	game()
 
-	#DEBUG TOOLS
-	# print(cardsPositions)
-	#findCardPos(position="a1")
 
 def game():
 	"main loop of the game"
@@ -198,21 +205,21 @@ def game():
 		#ask player for a command
 		action = question(0, 3, 4, "action")
 
-		#1. see a card from a stack
-		if action in ["watch", "w", "1"]: #show the card from stack if possible
-			watch = coordInput(6, "watch")
-			print(watch)
-		
+		#1. see a card from a stack if possible
+		if action in ["watch", "w", "1"]:
+			watchCoord = coordInput(6, "watch") #coordinates of the stack
+			watchCard(watchCoord)
+
 		#2. move a card
 		if action in ["move", "m", "2"]: 
 			#ask player for a coordinate a1 or 1a, whatever or the card name (visible)
 			moveFrom = coordInput(7, "moveFrom")
 			#move the card to coordinate if possible
 			moveTo = coordInput(8, "moveTo") 
-			print(moveFrom, moveTo)
+			# print(moveFrom, moveTo)
 
 		#debug tools
-		input("DEBUG MODE")
+		#input("DEBUG MODE")
 			
 
 		#check if table if cells are complete and game finished, if yes, victory and break loop
@@ -240,7 +247,6 @@ def question(a, b, c, f):
 
 def checkAnswer(answer, flag):
 	"check if the answer is correct and return accordingly"
-	
 	if answer in ['h', 'help', '3']:
 		help()
 		return True
@@ -279,6 +285,22 @@ def checkCoords(userInput, action):
 			return True
 	
 	return False
+
+def watchCard(coord):
+	"show a card from the stack if a card is present"
+	stacks = ["a1", 'b2', 'b3','b4', 'b5', 'b6', 'b7']
+	flag = 0
+
+	for stack in stacks:
+		if coord == stack:
+			print("Good coordinates")
+			flag = 1
+
+	if flag == 0:
+		print("There is no stack at this coordinates.")
+
+	print(cardsPositions)
+	print(tableOccupation[coord])
 
 def help():
 	"help screen"
