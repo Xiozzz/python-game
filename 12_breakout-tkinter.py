@@ -1,10 +1,6 @@
 # -*- coding:Utf-8 -*-
 "breakout game"
 
-"""
-One paddle, one bouncing ball and bricks
-"""
-
 #libraries
 from tkinter import *
 from random import choice
@@ -13,14 +9,12 @@ from sys import exit
 #datas
 TITLE = "Breakout Game"
 
-COLORS = [
-'blue', 'green', 'red', 'yellow', 'pink', 'orange'
-] #used to get random color for bricks
+COLORS = ['white', 'tomato', 'sandy brown', 'goldenrod', 'gold', 'yellow green', 'cadet blue'] #used to get random color for bricks
 
 WIDTH, HEIGHT = 400, 600
 
 #variables
-nb, bricks = 25, [] #bricks number and list
+nb, bricks = 30, [] #bricks number and list
 brickDic = {} #bricks dictionnary with coordinates
 
 bx, by, br = 200, 564, 8 #ball coordinates and radius
@@ -108,15 +102,19 @@ def ballMovement():
 def createBricks():
 	"create bricks and store them in list"
 	w, h = 60, 20 #size of one brick
-	x, y, hw, hh = 60, 40, w/2, h/2 # coordinates x, y and half size w, h
+	x, y, hw, hh = 0, 0, w/2, h/2 # coordinates x, y and half size w, h
 	c = 0
+	cIndex = 0 #color index
+	color = COLORS[cIndex]
+
 	while c < nb:
 		x += 71
 		if c%5 == 0:
+			cIndex += 1
+			color = COLORS[cIndex]
 			x = 60
 			y += 40
 
-		color = choice(COLORS)
 		brick = gameScreen.create_rectangle(x-hw, y-hh, x+hw, y+hh, fill=color, width=0)
 		bricks.append(brick)
 		brickDic[brick] = [x-hw, y-hh, x+hw, y+hh]
@@ -127,8 +125,33 @@ def createBricks():
 def checkBrickImpact():
 	"return true if the ball touch a brick (brick destroyed and removed from bricks and brickDic)"
 	#check if impact with a brick
+
 	for brick in bricks:
 		if by-br == brickDic[brick][3] and bx >= brickDic[brick][0] and bx <= brickDic[brick][2]:
+			print("Impact brick!", brick)
+			#delete the brick in brickDic
+			gameScreen.delete(brick)
+			bricks.remove(brick)
+			brickDic.pop(brick, None)
+			return True
+
+		if by+br == brickDic[brick][1] and bx >= brickDic[brick][0] and bx <= brickDic[brick][2]:
+			print("Impact brick!", brick)
+			#delete the brick in brickDic
+			gameScreen.delete(brick)
+			bricks.remove(brick)
+			brickDic.pop(brick, None)
+			return True
+
+		if bx+br == brickDic[brick][0] and by >= brickDic[brick][1] and by <= brickDic[brick][3]:
+			print("Impact brick!", brick)
+			#delete the brick in brickDic
+			gameScreen.delete(brick)
+			bricks.remove(brick)
+			brickDic.pop(brick, None)
+			return True
+
+		if bx-br == brickDic[brick][2] and by >= brickDic[brick][1] and by <= brickDic[brick][3]:
 			print("Impact brick!", brick)
 			#delete the brick in brickDic
 			gameScreen.delete(brick)
