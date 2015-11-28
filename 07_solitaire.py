@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-#Text based solitaire game using a grid, row/col, to place number
+"Text based solitaire game using a grid, row/col, to place number"
 
 """
-distributeCard function broken
+- working on the watchCard function
 """
 
 #libraries
@@ -72,8 +72,8 @@ TEXTS = [
 "3. (H)elp. Read the rules",
 "Please give the coordinates of the stack you want to watch a card.",
 "Please give the coordinates or the name of the card you wish to move.",
-"Please give the coordinates where you wish your card to be moved.",
-"This answer is not valid."
+"Thanks. Please give now the coordinates where you wish your card to be moved.",
+"Sorry. This answer is not valid."
 ]
 
 RULES = """
@@ -159,16 +159,11 @@ def distributeCard(cards):
 		for sack in sacks:
 			if tableOccupation[sack][1] < tableOccupation[sack][0]:  #check if their is free space for a card
 				tableOccupation[sack][1] += 1 #increment by one and take a free space
-				c += 1
 				for cardPos in cardsPositions:
 					if cardPos[0] == cards[c]:
-						cardPos[1] = sack
-						print(cardPos)
-		
+						cardPos[1] = sack #give card its position
+				c += 1
 
-	#debug
-	for sack in sacks:
-		print(tableOccupation[sack])
 
 def cleanScreen():
 	"cleaning the screen"
@@ -176,19 +171,18 @@ def cleanScreen():
 
 def newGame():
 	"set a new game and start"
-	#clean the dictionnary variables to default
+	#set the variables to default
 	setDefault()
 
 	#copy a set of 52 cards
 	gameCards = shuffleCopy(CARDS)
-	print("GAMECARDS:", gameCards)
+
 	#distribute the 52 cards in the table
 	distributeCard(gameCards)
-	print(cardsPositions)
-	#DEBUG TOOLS
-	# findCardPos(position="a1")
-	input("DEBUG TOOLS")
 
+	#DEBUG TOOLS
+	# findCardPos(position="a1", card="A01")
+	# input()
 	#display the table
 	game()
 
@@ -288,19 +282,43 @@ def checkCoords(userInput, action):
 
 def watchCard(coord):
 	"show a card from the stack if a card is present"
-	stacks = ["a1", 'b2', 'b3','b4', 'b5', 'b6', 'b7']
+	stacks = ["a1", 'b2', 'b3','b4', 'b5', 'b6', 'b7'] #stack in which there is card to watch
+	stacksRelation = [["a1", "a2"], ['b2', 'c2'], ['b3', 'c3'], ['b4', 'c4'], ['b5', 'c5'], ['b6', 'c6'], ['b7', 'c7']]
 	flag = 0
+
 
 	for stack in stacks:
 		if coord == stack:
 			print("Good coordinates")
-			flag = 1
+			if tableOccupation[coord][1] > 0: #check if there is a card to coordinates
+				tableOccupation[coord][1] -= 1
+				flag = 1
+			else:
+				flag = 2
 
 	if flag == 0:
 		print("There is no stack at this coordinates.")
 
+	if flag == 1:
+		print("I will now, show you the card.")
+		#check if the related space to the stack is free (no need for a1)
+
+		#if yes move the card from stack to new position, update tableOccupation et cardsPositions
+
+	if flag == 2:
+		print("There is no card in this stack anymore.")
+
+
+	#!Special, for bigStack a1, if all the cards have been moved, and the player ask again, then all the cards from a2 go back to a1
+
+
+	#debug	
+	print("DEBUG :\ncards positions :")
 	print(cardsPositions)
-	print(tableOccupation[coord])
+	print("spaces occupations :")
+	for c in stacks:
+		print(c, ':', tableOccupation[c])
+	input()
 
 def help():
 	"help screen"
@@ -311,9 +329,9 @@ def findCardPos(card=None, position=None):
 	"used to find the card or the position in list cardPositions"
 	for cardPos in cardsPositions:
 		if position == cardPos[1]:
-			print("index de la position :", cardsPositions.index(cardPos), "card", cardPos[0])
+			print("index de la position", position,":", cardsPositions.index(cardPos), "card", cardPos[0])
 		if card == cardPos[0]:
-			print("index de la carte :", card, cardsPositions.index(cardPos), "position", cardPos[1])
+			print("index de la carte", card,":", cardsPositions.index(cardPos), "position", cardPos[1])
 
 def shuffleCopy(CARDS):
 	#used to randomly shuffle cards
