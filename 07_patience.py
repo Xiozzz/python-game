@@ -11,8 +11,8 @@ import sys
 from random import randint, shuffle
 
 #datas
-TITLE = "\n\t\t=========\n\t\tSOLITAIRE\n\t\t========="
-INTRO = "Welcome in the Solitaire Game"
+TITLE = "\n\t\t========\n\t\tPATIENCE\n\t\t========"
+INTRO = "Welcome in the Patience/Klondike/Solitaire Game"
 
 #all the differents cards of the game
 CARDS = [
@@ -135,7 +135,10 @@ def displayTable():
 
 		for y in COORDY:
 			position = x + y
-			if tableOccupation[position][1] and POSNAMES[position][:-2] == "card":
+			if tableOccupation[position][1] == 0:
+				print("    |", end=" ")
+
+			elif tableOccupation[position][1] and POSNAMES[position][:-2] == "card":
 				print("Crd |", end=" ")
 
 			elif tableOccupation[position][1]: #if there is a card in #index1
@@ -282,41 +285,51 @@ def checkCoords(userInput, action):
 
 def watchCard(coord):
 	"show a card from the stack if a card is present"
-	stacks = ["a1", 'b2', 'b3','b4', 'b5', 'b6', 'b7'] #stack in which there is card to watch
-	stacksRelation = [["a1", "a2"], ['b2', 'c2'], ['b3', 'c3'], ['b4', 'c4'], ['b5', 'c5'], ['b6', 'c6'], ['b7', 'c7']]
-	flag = 0
+	stacksFrom = ["a1", 'b2', 'b3','b4', 'b5', 'b6', 'b7'] #stack in which there is card to watch
+	stacksTo = ["a2", 'c2', 'c3','c4', 'c5', 'c6', 'c7'] #stack where the card can go
+	indexCoord = stacksFrom.index(coord) #index in stack of coordinates
+	relatedCoord = stacksTo[indexCoord]
+	flag = 3
 
-
-	for stack in stacks:
+	for stack in stacksFrom:
 		if coord == stack:
-			print("Good coordinates")
-			if tableOccupation[coord][1] > 0: #check if there is a card to coordinates
+			#Special, for bigStack a1, if all the cards have been moved, and the player ask again, then all the cards from a2 go back to a1
+			if coord == "a1":
 				tableOccupation[coord][1] -= 1
+				tableOccupation[relatedCoord][1] += 1
+				flag = 0
+
+			elif tableOccupation[coord][1] > 0: #check if there is a card to coordinates
 				flag = 1
+
 			else:
 				flag = 2
 
 	if flag == 0:
-		print("There is no stack at this coordinates.")
+		print("Main stack a1 to a2")		
 
-	if flag == 1:
-		print("I will now, show you the card.")
-		#check if the related space to the stack is free (no need for a1)
-
+	if flag == 1: #check if free space for b stacks
+		if coord[0] == "b" and tableOccupation[relatedCoord][1] == 0:
+			tableOccupation[coord][1] -= 1
+			tableOccupation[relatedCoord][1] += 1
+		else:
+			print("There is already a card in ", tableOccupation[relatedCoord])
 		#if yes move the card from stack to new position, update tableOccupation et cardsPositions
+		#need to build an array with the card in order in stakcs and keep the same order as I move them
 
 	if flag == 2:
 		print("There is no card in this stack anymore.")
 
-
-	#!Special, for bigStack a1, if all the cards have been moved, and the player ask again, then all the cards from a2 go back to a1
-
+	if flag == 3:
+		print("There is no stack at this coordinates.")
 
 	#debug	
 	print("DEBUG :\ncards positions :")
 	print(cardsPositions)
 	print("spaces occupations :")
-	for c in stacks:
+	for c in stacksFrom:
+		print(c, ':', tableOccupation[c])
+	for c in stacksTo:
 		print(c, ':', tableOccupation[c])
 	input()
 
