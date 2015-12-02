@@ -25,7 +25,7 @@ INFO = [
 "3. Quit the game"
 ]
 
-wordBank = "wordbank.txt"
+filename = "wordbank.txt"
 
 #functions
 
@@ -54,28 +54,52 @@ def wordBank():
 	"word bank, to check, add and remove words"
 	print("Time to go to the bank")
 	removeWidgets()
+	#open wordBank to display it
 	#check the file wordbanb.txt and display all the words
+	wordBank = open(filename)
+	data = wordBank.readlines() #use read()
+	wordBank.close()
+	print(data)
 
-def addWord(word):
-	"menu"
-	words = open(wordBank, "a")
-	words.write(word)
-	words.close()
+	#define the bank widgets
+	inputUser = StringVar()
+	wordEntry = Entry(gameInput, textvariable=inputUser, width=20)
+	butAdd = Button(gameInput, text="Add Word", command=lambda:addWord(inputUser), height=1, width=15)
+	butRem = Button(gameInput, text="Remove Word", command=lambda:remWord(inputUser), height=1, width=15)
+	gridBankSetup(wordEntry, butAdd, butRem)
+	wordEntry.focus_set()
 
+def addWord(i):
+	"add word to the wordbank"
+	word = i.get()
+	wordBank = open(filename, 'a')
+	wordBank.write("\n"+word)
+	wordBank.close()
+	print(word,"added to file")
 
-def gridBankSetup():
+def remWord(i):
+	"remove word from the wordbank"
 	pass
+
+def gridBankSetup(entry, but1, but2):
+	"set the grid for the word bank screen"
+	entry.grid(row="1", column="1", padx=10, pady=20)
+	but1.grid(row="1", column="2", padx=5, pady=10)
+	but2.grid(row="1", column="3", padx=5, pady=10)
 
 def gridGameSetup():
 	pass
 
 def gridMenuSetup(butStart, butBank, butQuit):
-	"set the grid of the main program"
-	gameScreen.grid(row="1", column="1", columnspan="3", padx=0, pady=5)
-	gameInput.grid(row="2", column="1", columnspan="3", padx=10, pady=5)
+	"set the grid of the menu"
 	butStart.grid(row='1', column="1", padx=5, pady=10)
 	butBank.grid(row='1', column="2", padx=5, pady=10)
 	butQuit.grid(row='1', column="3", padx=5, pady=10)
+
+def gridSetup():
+	"set the grid of the main program"
+	gameScreen.grid(row="1", column="1", columnspan="3", padx=0, pady=5)
+	gameInput.grid(row="2", column="1", columnspan="3", padx=10, pady=5)
 
 def removeWidgets():
 	"remove the widget in the main canva and frame"
@@ -88,6 +112,7 @@ def removeWidgets():
 def windowSetup():
 	"center in screen the window"
 	root.title(TITLE)
+	root.resizable(0, 0)
 	root.bind("<Escape>", lambda e: exitRoot())
 	root.update_idletasks()
 	width = root.winfo_width()
@@ -108,6 +133,7 @@ if __name__ == "__main__":
 	gameScreen = Canvas(root, width=WIDTH, height=HEIGHT, bg=COLORS[0])
 	gameInput = Frame(root, bg=COLORS[2])
 
+	gridSetup()
 	menu()
 	windowSetup() 
 	root.mainloop()
