@@ -9,9 +9,11 @@
 import os
 import sys
 from random import randint, shuffle
+from prettytable import PrettyTable
 
 #datas
-TITLE = "\n\t\t========\n\t\tPATIENCE\n\t\t========"
+MAINTITLE = "\n\t\t========\n\t\tPATIENCE\n\t\t========"
+TITLE = "PATIENCE"
 INTRO = "Welcome in the Patience/Klondike/Solitaire Game"
 
 #all the differents cards of the game
@@ -120,7 +122,18 @@ tableOccupation = {
 }
 
 #functions
+
+
 def displayTable():
+	"check occupation of the table and draw the game grid"
+	print()
+	table = PrettyTable()
+	table.padding_width = 2
+	table.field_names = list(' 1234567')
+	table.title = "TITLE"
+	print(table)
+
+def displayTable_backup():
 	"check occupation of the table and draw the game grid"
 	jump=1
 	print(TITLE)
