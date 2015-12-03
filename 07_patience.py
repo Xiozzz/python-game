@@ -12,8 +12,7 @@ from random import randint, shuffle
 from prettytable import PrettyTable
 
 #datas
-MAINTITLE = "\n\t\t========\n\t\tPATIENCE\n\t\t========"
-TITLE = "PATIENCE"
+TITLE = "\n\t\t\t========\n\t\t\tPATIENCE\n\t\t\t========"
 INTRO = "Welcome in the Patience/Klondike/Solitaire Game"
 
 #all the differents cards of the game
@@ -121,16 +120,41 @@ tableOccupation = {
 'o1':[1, 0], 'o2':[1, 0], 'o3':[1, 0], 'o4':[1, 0], 'o5':[1, 0], 'o6':[1, 0], 'o7':[1, 0]
 }
 
+#sacks where cards are distributed in the beginning
+SACKS = ['a1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7']
+
+CELLS = ['a4', 'a5', 'a6', 'a7']
+
 #functions
 
 
 def displayTable():
 	"check occupation of the table and draw the game grid"
-	print()
+	print(TITLE)
 	table = PrettyTable()
 	table.padding_width = 2
 	table.field_names = list(' 1234567')
-	table.title = "TITLE"
+
+	c = 1
+
+	for x in COORDX:
+		newRow = [x]
+		emptRw = ["","","","","","","",""]
+		while c <= 7:
+			position = x+str(c)
+			if position in CELLS:
+				newRow.append('CLL')
+			elif position in SACKS and tableOccupation[position][1] != 0:
+				newRow.append('PCK')
+			elif tableOccupation[position][1] != 0:
+				newRow.append('CRD')
+			else:
+				newRow.append(' ')
+			c += 1
+		table.add_row(newRow)
+		table.add_row(emptRw)
+		c = 1
+
 	print(table)
 
 def displayTable_backup():
@@ -167,12 +191,11 @@ def displayTable_backup():
 def distributeCard(cards):
 	"distribute the card in a free socket" 
 
-	#sacks where cards are distributed in the beginning
-	sacks = ["a1", 'b2', 'b3','b4', 'b5', 'b6', 'b7']
+
 	c = 0
 
 	while c < 52:
-		for sack in sacks:
+		for sack in SACKS:
 			if tableOccupation[sack][1] < tableOccupation[sack][0]:  #check if their is free space for a card
 				tableOccupation[sack][1] += 1 #increment by one and take a free space
 				for cardPos in cardsPositions:
