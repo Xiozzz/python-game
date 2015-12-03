@@ -10,6 +10,7 @@
 #libraries
 from tkinter import *
 from sys import exit
+import pickle
 
 #datas
 TITLE = "Hangman"
@@ -25,7 +26,8 @@ INFO = [
 "3. Quit the game"
 ]
 
-filename = "wordbank.txt"
+filename = "wordbank"
+wordList = []
 
 #functions
 
@@ -46,20 +48,16 @@ def menu():
 def newGame():
 	print("Hello, World!")
 	removeWidgets()
+	cleanScreen()
 	#remove menu button
 	#define game entry input
 	#define game button ok validation
 
 def wordBank():
 	"word bank, to check, add and remove words"
-	print("Time to go to the bank")
 	removeWidgets()
 	#open wordBank to display it
-	#check the file wordbanb.txt and display all the words
-	wordBank = open(filename)
-	data = wordBank.readlines() #use read()
-	wordBank.close()
-	print(data)
+	displayWords()
 
 	#define the bank widgets
 	inputUser = StringVar()
@@ -69,13 +67,28 @@ def wordBank():
 	gridBankSetup(wordEntry, butAdd, butRem)
 	wordEntry.focus_set()
 
-def addWord(i):
+def displayWords():
+	"display the words in wordBank"
+	global wordList
+	cleanScreen()
+	px, py = 50, 20
+	f = open(filename, 'rb')
+	wordList = pickle.load(f)
+	for word in wordList:
+		gameScreen.create_text(px, py, text=word, fill=COLORS[3])
+		py += 20
+	f.close()
+
+def addWord(iu):
 	"add word to the wordbank"
-	word = i.get()
-	wordBank = open(filename, 'a')
-	wordBank.write("\n"+word)
-	wordBank.close()
-	print(word,"added to file")
+	global wordList
+	newWord = iu.get()
+	wordList.append(newWord)
+	f = open(filename, 'wb')
+	pickle.dump(wordList, f)
+	f.close()
+	print(newWord,"added to file")
+	displayWords()
 
 def remWord(i):
 	"remove word from the wordbank"
@@ -107,6 +120,7 @@ def removeWidgets():
 	for widget in gameInput.winfo_children():
 		widget.destroy()
 
+def cleanScreen():
 	gameScreen.delete(ALL)
 
 def windowSetup():
