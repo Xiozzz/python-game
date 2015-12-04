@@ -33,6 +33,8 @@ wordList = []
 
 def menu():
 	"game menu, check, remove, add word in bank words or play new game"
+	removeWidgets()
+	cleanScreen()
 	gameTitle = gameScreen.create_text(WIDTH/2, HEIGHT/6, text=TITLE, fill=COLORS[1], font=("sans-serif", 20))
 	menuInfo1 = gameScreen.create_text(WIDTH/2, HEIGHT/2, text=INFO[0], fill=COLORS[3], font=("sans-serif", 12))
 	menuInfo2 = gameScreen.create_text(WIDTH/2, HEIGHT/2+30, text=INFO[1], fill=COLORS[3], font=("sans-serif", 10))
@@ -62,10 +64,11 @@ def wordBank():
 	#define the bank widgets
 	inputUser = StringVar()
 	wordEntry = Entry(gameInput, textvariable=inputUser, width=20)
-	butAdd = Button(gameInput, text="Add Word", command=lambda:addWord(inputUser), height=1, width=15)
-	butRem = Button(gameInput, text="Remove Word", command=lambda:remWord(inputUser), height=1, width=15)
-	gridBankSetup(wordEntry, butAdd, butRem)
-	wordEntry.focus_set()
+	wordEntry.bind('<Return>', lambda e:addWord(inputUser))
+	butAdd = Button(gameInput, text="Add Word", command=lambda:addWord(inputUser), height=1, width=13)
+	butRem = Button(gameInput, text="Remove Word", command=lambda:remWord(inputUser), height=1, width=13)
+	butQt = Button(gameInput, text="Q", command=menu, height=1, width=2)
+	gridBankSetup(wordEntry, butAdd, butRem, butQt)
 
 def displayWords():
 	"display the words in wordBank"
@@ -73,32 +76,73 @@ def displayWords():
 	cleanScreen()
 	px, py = 50, 20
 	f = open(filename, 'rb')
-	wordList = pickle.load(f)
+	wordList = pickle.load(f) #save a list from the file
 	for word in wordList:
 		gameScreen.create_text(px, py, text=word, fill=COLORS[3])
 		py += 20
+		if py > 380:
+			px += 100
+			py = 20
 	f.close()
+
+def cleanBank():
+	"clean the Bank file"
+	print("cleanBank tests")
+	wordBank = open(filename, 'rb')
+	words = pickle.load(wordBank)
+	print(words)
+	wordBank.close()
+
+	wordBank = open(filename, 'wb')
+	pickle.dump(wordList, wordBank)
+	wordBank.close()
+
+	wordBank = open(filename, 'rb')
+	words = pickle.load(wordBank)
+	print(words)
+	wordBank.close()
+
 
 def addWord(iu):
 	"add word to the wordbank"
 	global wordList
-	newWord = iu.get()
-	wordList.append(newWord)
+	newWord = iu.get().lower()
+	if newWord not in wordList and len(newWord) < 9:
+		wordList.append(newWord)
+		print(newWord,"added to file.")
+	elif len(newWord) >= 9:
+		print("You word have too much characters. (8 maximum)")
+	else:
+		print(newWord, "is already in the bank.")
 	f = open(filename, 'wb')
 	pickle.dump(wordList, f)
 	f.close()
-	print(newWord,"added to file")
+	iu.set("")
 	displayWords()
 
-def remWord(i):
-	"remove word from the wordbank"
-	pass
 
-def gridBankSetup(entry, but1, but2):
+def remWord(iu):
+	"remove word from the wordbank"
+	global wordList
+	newWord = iu.get().lower()
+	if newWord in wordList:
+		wordList.remove(newWord)
+		print(newWord,"removed from file.")
+	else:
+		print(newWord, "is not in the bank.")
+	f = open(filename, 'wb')
+	pickle.dump(wordList, f)
+	f.close()
+	iu.set("")
+	displayWords()
+
+
+def gridBankSetup(entry, but1, but2, but3):
 	"set the grid for the word bank screen"
 	entry.grid(row="1", column="1", padx=10, pady=20)
 	but1.grid(row="1", column="2", padx=5, pady=10)
 	but2.grid(row="1", column="3", padx=5, pady=10)
+	but3.grid(row="1", column="4", padx=5, pady=10)
 
 def gridGameSetup():
 	pass
