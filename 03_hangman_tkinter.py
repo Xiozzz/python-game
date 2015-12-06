@@ -1,11 +1,9 @@
 # -*- coding:Utf-8 -*-
-"hangman game with tkinter"
+#hangman game with tkinter
 
 '''
-- pixel art custom gif format
-- start game, make vanish title and start button, make appear drawing, score, letter found, letter asked, user entry input, button ok
-- datas in text file (open, read, w, r, readline, readlines, etc) for bank words
-- menu, add or remove word in the wordbank
+- drawing custom gif format
+- guess checker
 '''
 #libraries
 from tkinter import *
@@ -24,12 +22,16 @@ INFO = [
 "Welcome, what do you want to do ?",
 "1. Start a new game",
 "2. Add or remove words in the bank.",
-"3. Quit the game"
+"3. Quit the game",
+"Please write a guess to find the hidden word"
 ]
 
 filename = "wordbank"
 wordList = []
 gameWord = ""
+hiddenWord = ""
+letter_found = []
+letter_guesses = []
 
 #functions
 
@@ -57,31 +59,61 @@ def newGame():
 	#define game entry input
 	inputUser = StringVar()
 	gameEntry = Entry(gameInput, textvariable=inputUser, width=20)
-	gameEntry.bind("<Return>", lambda e:testWord(inputUser))
+	gameEntry.bind("<Return>", lambda e:checkGuess(inputUser))
 	#define game button ok validation and quit
-	butOk = Button(gameInput, text="Submit", command=lambda:testWord(inputUser), height=1, width=10)
+	butOk = Button(gameInput, text="Submit", command=lambda:checkGuess(inputUser), height=1, width=10)
 	butQt = Button(gameInput, text="Quit", command=menu, height=1, width=10)
 	gridGameSetup(gameEntry, butOk, butQt)
 	#choose a word in the wordList for the game
 	gameWord = chooseWord()
-	#display an introduction message and the first pictur
-	#
+	print("DEBUG:", gameWord)
+	#display the hidden word _ _ _
+	hiddenWord = hideWord()
+	print("DEBUG:", hiddenWord)
+	#display an introduction message, the first hidden word and the first picture
+	gameScreen.create_text(WIDTH/2, HEIGHT-20, text=INFO[4], fill=COLORS[3], font=("sans-serif", 10) )
+	gameScreen.create_rectangle(WIDTH/2+70, HEIGHT/2+70, WIDTH/2-70, HEIGHT/2-70, fill=COLORS[2])
+	gameScreen.create_text(WIDTH/2, HEIGHT-60, text=hiddenWord, fill=COLORS[1], font=("sans-serif", 20) )
 
 def chooseWord():
 	"random choice"
 	global gameWord
 	f = open(filename, 'rb')
-	wordList = pickle.load(f) #save a list from the file
+	wordList = pickle.load(f) #save the word list from the file
+	f.close()
 	#choose a random word from list
 	gameWord = random.choice(wordList)
-	f.close()
+	return gameWord
 
-def testWord(iu):
-	"check if the word"
+def hideWord():
+	"build the hidden word"
+	global hiddenWord
+	hiddenWord = ""
+	for letter in gameWord:
+		if letter in letter_guesses:
+			hiddenWord += letter
+		else:
+			hiddenWord += " _ "
+	return hiddenWord
+
+def checkGuess(iu):
+	"check if guess right or wrong, redirect to updtabePicture and updateWord"
 	word = iu.get().lower()
-	print(gameWord)
 	print(word)
 	iu.set("")
+
+def checkInput():
+	"check if the word use valid characters"
+	pass
+
+def updatePicture():
+	"display picture depending number of guesses and game message about sucess, lose"
+	pass
+
+def displayWord():
+	"display the Word in gameScreen, the letter/words already tried, number of turn"
+	pass
+
 
 def wordBank():
 	"word bank, to check, add and remove words"
@@ -139,7 +171,7 @@ def addWord(iu):
 		wordList.append(newWord)
 		print(newWord,"added to file.")
 	elif len(newWord) >= 9:
-		print("You word have too much characters. (8 maximum)")
+		print("You word have too much characters. ("+str(len(newWord))+" for 10 maximum)")
 	else:
 		print(newWord, "is already in the bank.")
 	f = open(filename, 'wb')
@@ -173,9 +205,9 @@ def gridBankSetup(entry, but1, but2, but3):
 	but3.grid(row="1", column="4", padx=5, pady=10)
 
 def gridGameSetup(entry, but1, but2):
-	entry.grid(row="1", column="1", padx=10, pady=20)
-	but1.grid(row="1", column="2", padx=5, pady=10)
-	but2.grid(row="1", column="3", padx=5, pady=10)
+	entry.grid(row="1", column="1", padx=25, pady=20)
+	but1.grid(row="1", column="2", padx=15, pady=10)
+	but2.grid(row="1", column="3", padx=15, pady=10)
 
 def gridMenuSetup(butStart, butBank, butQuit):
 	"set the grid of the menu"
@@ -190,7 +222,6 @@ def gridSetup():
 
 def removeWidgets():
 	"remove the widget in the main canva and frame"
-
 	for widget in gameInput.winfo_children():
 		widget.destroy()
 
