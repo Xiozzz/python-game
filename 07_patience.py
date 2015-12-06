@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-"Text based solitaire game using a grid, row/col, to place number"
+#Text based patience card game
 
 """
 - working on the watchCard function
+- the reversed coordinates userInput ex: '1a', '3b' break the game
 """
 
 #libraries
@@ -157,43 +158,9 @@ def displayTable():
 
 	print(table)
 
-def displayTable_backup():
-	"check occupation of the table and draw the game grid"
-	jump=1
-	print(TITLE)
-
-	print("\n", end="    ")
-	for y in COORDY:
-		print(y+"  |  ", end="")
-
-	for x in COORDX:
-		if jump:
-			print("\n\n"+x+"| ", end="")
-
-		for y in COORDY:
-			position = x + y
-			if tableOccupation[position][1] == 0:
-				print("    |", end=" ")
-
-			elif tableOccupation[position][1] and POSNAMES[position][:-2] == "card":
-				print("Crd |", end=" ")
-
-			elif tableOccupation[position][1]: #if there is a card in #index1
-				print("Stk |", end=" ") #print the card
-
-			elif POSNAMES[position] != "card"+position:
-			 	print("NoC |", end=" ")
-
-			elif POSNAMES[position] == "card"+position:
-				jump = 0
-	print("\n\n============================================")
-
-def distributeCard(cards):
+def distributeCards(cards):
 	"distribute the card in a free socket" 
-
-
 	c = 0
-
 	while c < 52:
 		for sack in SACKS:
 			if tableOccupation[sack][1] < tableOccupation[sack][0]:  #check if their is free space for a card
@@ -201,7 +168,16 @@ def distributeCard(cards):
 				for cardPos in cardsPositions:
 					if cardPos[0] == cards[c]:
 						cardPos[1] = sack #give card its position
+						tableOccupation[sack].append(cards[c])
 				c += 1
+	
+	for sack in SACKS:
+		print(tableOccupation[sack])
+		print()
+
+	print(tableOccupation['a1'][-1])
+
+	input("DEBUG INPUT")
 
 
 def cleanScreen():
@@ -217,7 +193,7 @@ def newGame():
 	gameCards = shuffleCopy(CARDS)
 
 	#distribute the 52 cards in the table
-	distributeCard(gameCards)
+	distributeCards(gameCards)
 
 	#DEBUG TOOLS
 	# findCardPos(position="a1", card="A01")
@@ -250,6 +226,8 @@ def game():
 			#move the card to coordinate if possible
 			moveTo = coordInput(8, "moveTo") 
 			# print(moveFrom, moveTo)
+			#check if movement possible
+			#then cardUpdate()
 
 		#debug tools
 		#input("DEBUG MODE")
@@ -331,8 +309,7 @@ def watchCard(coord):
 		if coord == stack:
 			#Special, for bigStack a1, if all the cards have been moved, and the player ask again, then all the cards from a2 go back to a1
 			if coord == "a1":
-				tableOccupation[coord][1] -= 1
-				tableOccupation[relatedCoord][1] += 1
+				cardUpdate(coord, relatedCoord)
 				flag = 0
 
 			elif tableOccupation[coord][1] > 0: #check if there is a card to coordinates
@@ -346,8 +323,7 @@ def watchCard(coord):
 
 	if flag == 1: #check if free space for b stacks
 		if coord[0] == "b" and tableOccupation[relatedCoord][1] == 0:
-			tableOccupation[coord][1] -= 1
-			tableOccupation[relatedCoord][1] += 1
+			cardUpdate(coord, relatedCoord)
 		else:
 			print("There is already a card in ", tableOccupation[relatedCoord])
 		#if yes move the card from stack to new position, update tableOccupation et cardsPositions
@@ -367,7 +343,23 @@ def watchCard(coord):
 		print(c, ':', tableOccupation[c])
 	for c in stacksTo:
 		print(c, ':', tableOccupation[c])
-	input()
+	input("DEBUG INPUT")
+
+def cardUpdate(CoordFrom, CoordTo):
+	"update data variables"
+	#remove the last card
+	card = tableOccupation[CoordFrom].pop()
+	tableOccupation[CoordFrom][1] -= 1
+	#add it to the related stack
+	tableOccupation[CoordTo].append(card)
+	tableOccupation[CoordTo][1] += 1
+	#update position of card in cardsPositions
+	cardIndex = cardsPositions.index([card, CoordFrom]) #find the index of the current card
+	print("The index is :", cardIndex)
+	cardsPositions[cardIndex][1] = CoordTo
+
+def moveCard():
+	pass
 
 def help():
 	"help screen"
@@ -419,5 +411,5 @@ def menu():
 #program
 
 if __name__ == "__main__":
-	# menu()
+	menu()
 	newGame()
