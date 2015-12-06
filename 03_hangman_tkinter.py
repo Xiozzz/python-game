@@ -11,6 +11,7 @@
 from tkinter import *
 from sys import exit
 import pickle
+import random
 
 #datas
 TITLE = "Hangman"
@@ -28,6 +29,7 @@ INFO = [
 
 filename = "wordbank"
 wordList = []
+gameWord = ""
 
 #functions
 
@@ -48,12 +50,38 @@ def menu():
 	gridMenuSetup(butStart, butBank, butQuit)
 
 def newGame():
-	print("Hello, World!")
+	"start a new game, get a new random word and start"
+	#remove menu buttons and clean game screen
 	removeWidgets()
 	cleanScreen()
-	#remove menu button
 	#define game entry input
-	#define game button ok validation
+	inputUser = StringVar()
+	gameEntry = Entry(gameInput, textvariable=inputUser, width=20)
+	gameEntry.bind("<Return>", lambda e:testWord(inputUser))
+	#define game button ok validation and quit
+	butOk = Button(gameInput, text="Submit", command=lambda:testWord(inputUser), height=1, width=10)
+	butQt = Button(gameInput, text="Quit", command=menu, height=1, width=10)
+	gridGameSetup(gameEntry, butOk, butQt)
+	#choose a word in the wordList for the game
+	gameWord = chooseWord()
+	#display an introduction message and the first pictur
+	#
+
+def chooseWord():
+	"random choice"
+	global gameWord
+	f = open(filename, 'rb')
+	wordList = pickle.load(f) #save a list from the file
+	#choose a random word from list
+	gameWord = random.choice(wordList)
+	f.close()
+
+def testWord(iu):
+	"check if the word"
+	word = iu.get().lower()
+	print(gameWord)
+	print(word)
+	iu.set("")
 
 def wordBank():
 	"word bank, to check, add and remove words"
@@ -107,7 +135,7 @@ def addWord(iu):
 	"add word to the wordbank"
 	global wordList
 	newWord = iu.get().lower()
-	if newWord not in wordList and len(newWord) < 9:
+	if newWord not in wordList and len(newWord) <= 10:
 		wordList.append(newWord)
 		print(newWord,"added to file.")
 	elif len(newWord) >= 9:
@@ -144,8 +172,10 @@ def gridBankSetup(entry, but1, but2, but3):
 	but2.grid(row="1", column="3", padx=5, pady=10)
 	but3.grid(row="1", column="4", padx=5, pady=10)
 
-def gridGameSetup():
-	pass
+def gridGameSetup(entry, but1, but2):
+	entry.grid(row="1", column="1", padx=10, pady=20)
+	but1.grid(row="1", column="2", padx=5, pady=10)
+	but2.grid(row="1", column="3", padx=5, pady=10)
 
 def gridMenuSetup(butStart, butBank, butQuit):
 	"set the grid of the menu"
