@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 #Text based patience card game
 
-"""
-- working on the watchCard function
-- the reversed coordinates userInput ex: '1a', '3b' break the game
-"""
-
 #libraries
 import os
 import sys
@@ -14,7 +9,7 @@ from prettytable import PrettyTable
 
 #datas
 TITLE = "\n\t\t\t========\n\t\t\tPATIENCE\n\t\t\t========"
-INTRO = "Welcome in the Patience/Klondike/Solitaire Game"
+INTRO = "Welcome in the Patience Game"
 
 #all the differents cards of the game
 CARDS = [
@@ -146,9 +141,12 @@ def displayTable():
 			if position in CELLS:
 				newRow.append('CLL')
 			elif position in SACKS and tableOccupation[position][1] != 0:
-				newRow.append('PCK')
+				newRow.append('SCK')
 			elif tableOccupation[position][1] != 0:
-				newRow.append('CRD')
+				if position == 'a2': #special case for the big sack in a1
+					newRow.append(tableOccupation[position][-1])
+				else: # others sack b2 to b7
+					newRow.append(tableOccupation[position][2])
 			else:
 				newRow.append(' ')
 			c += 1
@@ -171,13 +169,11 @@ def distributeCards(cards):
 						tableOccupation[sack].append(cards[c])
 				c += 1
 	
-	for sack in SACKS:
-		print(tableOccupation[sack])
-		print()
-
-	print(tableOccupation['a1'][-1])
-
-	input("DEBUG INPUT")
+	# for sack in SACKS:
+	# 	print(tableOccupation[sack])
+	# 	print()
+	# print(tableOccupation['a1'][-1])
+	# input("DEBUG MODE")
 
 
 def cleanScreen():
@@ -217,7 +213,7 @@ def game():
 		#1. see a card from a stack if possible
 		if action in ["watch", "w", "1"]:
 			watchCoord = coordInput(6, "watch") #coordinates of the stack
-			watchCard(watchCoord)
+			input(watchCard(watchCoord))
 
 		#2. move a card
 		if action in ["move", "m", "2"]: 
@@ -301,15 +297,18 @@ def watchCard(coord):
 	"show a card from the stack if a card is present"
 	stacksFrom = ["a1", 'b2', 'b3','b4', 'b5', 'b6', 'b7'] #stack in which there is card to watch
 	stacksTo = ["a2", 'c2', 'c3','c4', 'c5', 'c6', 'c7'] #stack where the card can go
+	
+	if coord not in stacksFrom:
+		return "There is no stack at this coordinates."
+	
 	indexCoord = stacksFrom.index(coord) #index in stack of coordinates
 	relatedCoord = stacksTo[indexCoord]
-	flag = 3
+	
 
 	for stack in stacksFrom:
 		if coord == stack:
 			#Special, for bigStack a1, if all the cards have been moved, and the player ask again, then all the cards from a2 go back to a1
 			if coord == "a1":
-				cardUpdate(coord, relatedCoord)
 				flag = 0
 
 			elif tableOccupation[coord][1] > 0: #check if there is a card to coordinates
@@ -319,31 +318,30 @@ def watchCard(coord):
 				flag = 2
 
 	if flag == 0:
-		print("Main stack a1 to a2")		
+		cardUpdate(coord, relatedCoord)
+		return "Main stack a1 to a2"		
 
 	if flag == 1: #check if free space for b stacks
 		if coord[0] == "b" and tableOccupation[relatedCoord][1] == 0:
 			cardUpdate(coord, relatedCoord)
+			return "Stack "+coord+" to "+relatedCoord
 		else:
-			print("There is already a card in ", tableOccupation[relatedCoord])
+			return "There is already a card in "+tableOccupation[relatedCoord]
 		#if yes move the card from stack to new position, update tableOccupation et cardsPositions
 		#need to build an array with the card in order in stakcs and keep the same order as I move them
 
 	if flag == 2:
-		print("There is no card in this stack anymore.")
-
-	if flag == 3:
-		print("There is no stack at this coordinates.")
+		return "There is no card in this stack anymore."
 
 	#debug	
-	print("DEBUG :\ncards positions :")
-	print(cardsPositions)
-	print("spaces occupations :")
-	for c in stacksFrom:
-		print(c, ':', tableOccupation[c])
-	for c in stacksTo:
-		print(c, ':', tableOccupation[c])
-	input("DEBUG INPUT")
+	# print("DEBUG :\ncards positions :")
+	# print(cardsPositions)
+	# print("spaces occupations :")
+	# for c in stacksFrom:
+	# 	print(c, ':', tableOccupation[c])
+	# for c in stacksTo:
+	# 	print(c, ':', tableOccupation[c])
+	# input("DEBUG INPUT")
 
 def cardUpdate(CoordFrom, CoordTo):
 	"update data variables"
@@ -355,7 +353,7 @@ def cardUpdate(CoordFrom, CoordTo):
 	tableOccupation[CoordTo][1] += 1
 	#update position of card in cardsPositions
 	cardIndex = cardsPositions.index([card, CoordFrom]) #find the index of the current card
-	print("The index is :", cardIndex)
+	# print("The index is :", cardIndex)
 	cardsPositions[cardIndex][1] = CoordTo
 
 def moveCard():
@@ -409,7 +407,6 @@ def menu():
 		sys.exit()
 
 #program
-
 if __name__ == "__main__":
 	menu()
-	newGame()
+	# newGame()
