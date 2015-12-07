@@ -3,8 +3,9 @@
 
 '''
 - drawing custom gif format
-- guess checker
+- the game need to end
 '''
+
 #libraries
 from tkinter import *
 from sys import exit
@@ -32,6 +33,7 @@ gameWord = ""
 hiddenWord = ""
 letter_found = []
 letter_guesses = []
+guesses = 0
 
 #functions
 
@@ -53,9 +55,12 @@ def menu():
 
 def newGame():
 	"start a new game, get a new random word and start"
+	global guesses
 	#remove menu buttons and clean game screen
 	removeWidgets()
 	cleanScreen()
+	#det variable to default
+	guesses = 0
 	#define game entry input
 	inputUser = StringVar()
 	gameEntry = Entry(gameInput, textvariable=inputUser, width=20)
@@ -66,14 +71,11 @@ def newGame():
 	gridGameSetup(gameEntry, butOk, butQt)
 	#choose a word in the wordList for the game
 	gameWord = chooseWord()
-	print("DEBUG:", gameWord)
-	#display the hidden word _ _ _
-	hiddenWord = hideWord()
-	print("DEBUG:", hiddenWord)
+	print("DEBUG #1:", gameWord)
 	#display an introduction message, the first hidden word and the first picture
-	gameScreen.create_text(WIDTH/2, HEIGHT-20, text=INFO[4], fill=COLORS[3], font=("sans-serif", 10) )
-	gameScreen.create_rectangle(WIDTH/2+70, HEIGHT/2+70, WIDTH/2-70, HEIGHT/2-70, fill=COLORS[2])
-	gameScreen.create_text(WIDTH/2, HEIGHT-60, text=hiddenWord, fill=COLORS[1], font=("sans-serif", 20) )
+	displayWord()
+	#update the first game picture
+	updatePicture()
 
 def chooseWord():
 	"random choice"
@@ -90,7 +92,7 @@ def hideWord():
 	global hiddenWord
 	hiddenWord = ""
 	for letter in gameWord:
-		if letter in letter_guesses:
+		if letter in letter_found:
 			hiddenWord += letter
 		else:
 			hiddenWord += " _ "
@@ -98,21 +100,59 @@ def hideWord():
 
 def checkGuess(iu):
 	"check if guess right or wrong, redirect to updtabePicture and updateWord"
-	word = iu.get().lower()
-	print(word)
-	iu.set("")
+	global guesses
+	cleanScreen() #clean the screen
+	guess = iu.get().lower()
 
-def checkInput():
-	"check if the word use valid characters"
-	pass
+	if len(guess) > 0:
+		guesses += 1
+
+	if guesses < 7: #max turn before end of the game
+		if guess == gameWord:
+			#victory
+			print("You won! :)")
+		elif guess.isalpha() and len(guess) == 1: #if letter
+			#add in list letter_guesses
+			letter_guesses.append(guess)
+			#add in list letter_found if the letter is correct
+			if guess in gameWord: 
+				letter_found.append(guess)
+			else:
+				print(guess, "is not in the hidden word.")	
+		else:
+			#is not alpha or is not a letter or is not the good guess
+			print("Sorry, this guess is not correct.")
+	else:
+		#no more turn avalable, end
+		print("You have not saved the man from hanging, game finished. :(")
+	
+	print("DEBUG #3 : turn", guesses,":", guess)
+	print("DEBUG #4 : guesses :", letter_guesses, "found :", letter_found)
+	updatePicture()
+	displayWord()
+	iu.set("")
 
 def updatePicture():
 	"display picture depending number of guesses and game message about sucess, lose"
-	pass
+	#change depending the number of turn
+	gameScreen.create_rectangle(WIDTH/2+70, HEIGHT/2+70, WIDTH/2-70, HEIGHT/2-70, fill=COLORS[2])
 
 def displayWord():
 	"display the Word in gameScreen, the letter/words already tried, number of turn"
-	pass
+	
+	#display the hidden word _ _ _
+	hiddenWord = hideWord()
+	turn = "Turn number : " + str(guesses)
+	letters = "Letters : "
+	for letter in letter_guesses:
+		letters += letter + " "
+	
+	print("DEBUG #2:", hiddenWord, letters, turn)
+
+	gameScreen.create_text(WIDTH/2, HEIGHT-20, text=INFO[4], fill=COLORS[3], font=("sans-serif", 10) )
+	gameScreen.create_text(WIDTH/2, HEIGHT-60, text=hiddenWord, fill=COLORS[1], font=("sans-serif", 20) )
+	gameScreen.create_text(WIDTH/2, HEIGHT-80, text=turn, fill=COLORS[3], font=("sans-serif", 10) )
+	gameScreen.create_text(WIDTH/2, HEIGHT-100, text=letters, fill=COLORS[3], font=("sans-serif", 10) )
 
 
 def wordBank():
