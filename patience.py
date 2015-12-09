@@ -326,7 +326,7 @@ def watchCard(coord):
 			cardUpdate(coord, relatedCoord)
 			return "Stack "+coord+" to "+relatedCoord
 		else:
-			return "There is already a card in "+tableOccupation[relatedCoord]
+			return "There is already a card in "+relatedCoord
 		#if yes move the card from stack to new position, update tableOccupation et cardsPositions
 		#need to build an array with the card in order in stakcs and keep the same order as I move them
 
@@ -408,5 +408,5 @@ def menu():
 
 #program
 if __name__ == "__main__":
-	menu()
-	# newGame()
+	# menu()
+	newGame()
