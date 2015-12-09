@@ -3,7 +3,7 @@
 
 '''
 - drawing custom gif format
-- the game need to end
+- the game need a game over ending
 '''
 
 #libraries
@@ -17,7 +17,7 @@ TITLE = "Hangman"
 
 WIDTH, HEIGHT = 400, 400
 
-COLORS = ["lemon chiffon", "dark salmon", "light blue", "chocolate"]
+COLORS = ["lemon chiffon", "dark salmon", "light blue", "chocolate", "firebrick"]
 
 INFO = [
 "Welcome, what do you want to do ?",
@@ -27,6 +27,7 @@ INFO = [
 "Please write a guess to find the hidden word"
 ]
 
+warning = ""
 filename = "wordbank"
 wordList = []
 gameWord = ""
@@ -55,12 +56,14 @@ def menu():
 
 def newGame():
 	"start a new game, get a new random word and start"
-	global guesses
+	global guesses, letter_found, letter_guesses
 	#remove menu buttons and clean game screen
 	removeWidgets()
 	cleanScreen()
 	#det variable to default
 	guesses = 0
+	letter_found = []
+	letter_guesses = []
 	#define game entry input
 	inputUser = StringVar()
 	gameEntry = Entry(gameInput, textvariable=inputUser, width=20)
@@ -100,7 +103,7 @@ def hideWord():
 
 def checkGuess(iu):
 	"check if guess right or wrong, redirect to updtabePicture and updateWord"
-	global guesses
+	global guesses, warning
 	cleanScreen() #clean the screen
 	guess = iu.get().lower()
 
@@ -110,24 +113,30 @@ def checkGuess(iu):
 	if guesses < 7: #max turn before end of the game
 		if guess == gameWord:
 			#victory
-			print("You won! :)")
+			for letter in guess:
+				letter_found.append(letter)
+			warning = "You won! :)"
+			displayVictory()
 		elif guess.isalpha() and len(guess) == 1: #if letter
 			#add in list letter_guesses
-			letter_guesses.append(guess)
-			#add in list letter_found if the letter is correct
-			if guess in gameWord: 
+			if guess in letter_guesses:
+				warning = guess+" have already been asked."
+			if guess not in letter_guesses:
+				letter_guesses.append(guess)
+			if guess in gameWord and guess not in letter_found: 
 				letter_found.append(guess)
+				warning = "Yes, "+guess+" is in the hidden word!"
 			else:
-				print(guess, "is not in the hidden word.")	
+				warning = "Sorry, "+guess+" is not in the hidden word."	
 		else:
 			#is not alpha or is not a letter or is not the good guess
-			print("Sorry, this guess is not correct.")
+			warning = "Sorry, this guess is not correct."
 	else:
 		#no more turn avalable, end
-		print("You have not saved the man from hanging, game finished. :(")
+		warning = "You have not saved the man from hanging, game finished. :("
 	
-	print("DEBUG #3 : turn", guesses,":", guess)
-	print("DEBUG #4 : guesses :", letter_guesses, "found :", letter_found)
+	# print("DEBUG #3 : turn", guesses,":", guess)
+	# print("DEBUG #4 : guesses :", letter_guesses, "found :", letter_found)
 	updatePicture()
 	displayWord()
 	iu.set("")
@@ -143,17 +152,17 @@ def displayWord():
 	#display the hidden word _ _ _
 	hiddenWord = hideWord()
 	turn = "Turn number : " + str(guesses)
-	letters = "Letters : "
+	letters = "Letters asked : "
 	for letter in letter_guesses:
 		letters += letter + " "
 	
-	print("DEBUG #2:", hiddenWord, letters, turn)
-
+	# print("DEBUG #2:", hiddenWord, letters, turn)
+	
+	gameScreen.create_text(WIDTH/2, 20, text=warning, fill=COLORS[4], font=("sans-serif", 10) )
 	gameScreen.create_text(WIDTH/2, HEIGHT-20, text=INFO[4], fill=COLORS[3], font=("sans-serif", 10) )
 	gameScreen.create_text(WIDTH/2, HEIGHT-60, text=hiddenWord, fill=COLORS[1], font=("sans-serif", 20) )
-	gameScreen.create_text(WIDTH/2, HEIGHT-80, text=turn, fill=COLORS[3], font=("sans-serif", 10) )
-	gameScreen.create_text(WIDTH/2, HEIGHT-100, text=letters, fill=COLORS[3], font=("sans-serif", 10) )
-
+	gameScreen.create_text(WIDTH/2, HEIGHT-90, text=turn, fill=COLORS[3], font=("sans-serif", 15) )
+	gameScreen.create_text(WIDTH/2, HEIGHT-110, text=letters, fill=COLORS[3], font=("sans-serif", 10) )
 
 def wordBank():
 	"word bank, to check, add and remove words"
@@ -279,6 +288,12 @@ def windowSetup():
 	x = root.winfo_screenwidth()//2 - width//2
 	y = root.winfo_screenheight()//2 - height//2
 	root.geometry("{}x{}+{}+{}".format(width, height, x, y))
+
+def displayVictory():
+	"display in case of victory"
+	removeWidgets()
+	butNew = Button(gameInput, text="Go Back To Menu", height=2, command=menu, width=20)
+	butNew.grid(row=1, column=1, padx=125, pady=10)
 
 def exitRoot():
 	sys.exit()
