@@ -43,7 +43,7 @@ COORDY = list('1234567')
 
 #names of each position in the game table
 POSNAMES ={
-'a1' : 'bigStk', 'a2' : 'cardVw', 'a3' : 'freeSp', 'a4' : 'cardC1',	'a5' : 'cardC2', 'a6' : 'cardC3', 'a7' : 'cardC4',
+'a1' : 'bigStk', 'a2' : 'carda2', 'a3' : 'freeSp', 'a4' : 'cell01',	'a5' : 'cell02', 'a6' : 'cell03', 'a7' : 'cell04',
 'b1' : 'stack0', 'b2' : 'stack1', 'b3' : 'stack2', 'b4' : 'stack3',	'b5' : 'stack4', 'b6' : 'stack5', 'b7' : 'stack6',
 'c1' : 'cardc1', 'c2' : 'cardc2', 'c3' : 'cardc3', 'c4' : 'cardc4', 'c5' : 'cardc5', 'c6' : 'cardc6', 'c7' : 'cardc7',
 'd1' : 'cardd1', 'd2' : 'cardd2', 'd3' : 'cardd3', 'd4' : 'cardd4', 'd5' : 'cardd5', 'd6' : 'cardd6', 'd7' : 'cardd7', 
@@ -118,8 +118,14 @@ tableOccupation = {
 
 #sacks where cards are distributed in the beginning
 SACKS = ['a1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7']
-
 CELLS = ['a4', 'a5', 'a6', 'a7']
+GAMSP = [
+'o7', 'i4', 'o6', 'd4', 'k1', 'g1', 'd3', 'c7', 'n6', 'l7', 'j7', 'g6', 'n7', 'i1', 'l2', 'f5', 'l5', 'h2', 'e7', 'n3',
+'m4', 'l1', 'e2', 'i7', 'n1', 'k7', 'd2', 'g5', 'd6', 'l6', 'n4', 'o1', 'e1', 'o3', 'g2', 'o4', 'g3', 'm6', 'f7', 'k5',
+'m3', 'n5', 'i5', 'n2', 'i2', 'e5', 'f4', 'l3', 'j1', 'c6', 'j5', 'o2', 'i6', 'j6', 'c4', 'g4', 'g7', 'h4', 'i3', 'd5',
+'a2', 'e6', 'h5', 'j3', 'd7', 'f2', 'h3', 'c5', 'd1', 'j2', 'o5', 'm1', 'k4', 'c1', 'l4', 'e3', 'h7', 'f1', 'm7', 'c2',
+'k3', 'f3', 'j4', 'm2', 'h1', 'c3', 'h6', 'k2', 'f6', 'e4', 'k6', 'm5'
+]
 
 #functions
 
@@ -217,10 +223,11 @@ def game():
 
 		#2. move a card
 		if action in ["move", "m", "2"]: 
-			#ask player for a coordinate a1 or 1a, whatever or the card name (visible)
+			#ask player for a coordinate like a2 or 3b, whatever or the card name (visible)
 			moveFrom = coordInput(7, "moveFrom")
 			#move the card to coordinate if possible
-			moveTo = coordInput(8, "moveTo") 
+			if checkMoveFrom(moveFrom):
+				moveTo = coordInput(8, "moveTo") 
 			# print(moveFrom, moveTo)
 			#check if movement possible
 			#then cardUpdate()
@@ -392,6 +399,38 @@ def setDefault():
 def debugTest():
 	"function use to make tests"
 	pass
+
+def checkMoveFrom(given):
+	"check if there is a card to move in coordinate given"
+	#take the coordinate from user input
+	if given in CARDS: #card name was given, find position
+		for position in cardsPositions:
+			if given in position:
+				coord = position[1]
+	elif given[::-1] in POSITIONS: #if reversed, reverse
+		coord = given[::-1]
+	else: #it was already good coordinates
+		coord = given
+
+	if coord in GAMSP and tableOccupation[coord][1] > 0:
+		print("Ok, let's see if we can move the card from coordinate", coord)
+		if True: #if we can move the card
+			print("Ok, we can move.")
+			# return True
+	else:
+		print("Sorry, this card cannot be moved.")
+
+	print("DEBUG", given, coord)
+	input()
+
+def GAMPS():
+	"def the GAME SPACE variable for cards"
+	for posname in POSNAMES:
+		if POSNAMES[posname][:-2] == "card":
+			GAMSP.append(posname)
+			print(posname, POSNAMES[posname])
+	print(GAMSP)
+	input()
 
 def menu():
 	"start a new game or quit"
