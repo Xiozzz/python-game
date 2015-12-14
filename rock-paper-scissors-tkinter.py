@@ -35,7 +35,6 @@ def setWindow():
 	x = (root.winfo_screenwidth()//2) - width//2
 	y = (root.winfo_screenheight()//2) - height//2
 	root.geometry("{}x{}+{}+{}".format(width, height, x, y))
-	root.resizable(0,0)
 	
 def setGrid():
 	"set the grid system for each widgets"
@@ -145,9 +144,9 @@ if __name__ == "__main__":
 	butStart = createButton("Start A New Game", setGame)
 
 	#create the differents images of the game
-	rockimg = PhotoImage(file="src02_rock-paper-scissors/rock.gif")
-	paperimg = PhotoImage(file="src02_rock-paper-scissors/paper.gif")
-	scissorsimg = PhotoImage(file="src02_rock-paper-scissors/scissors.gif")
+	rockimg = PhotoImage(file="src_rock-paper-scissors/rock.gif")
+	paperimg = PhotoImage(file="src_rock-paper-scissors/paper.gif")
+	scissorsimg = PhotoImage(file="src_rock-paper-scissors/scissors.gif")
 
 	setGrid()
 
