@@ -1,11 +1,6 @@
 # -*- coding:Utf-8 -*-
 #hangman game with tkinter
 
-'''
-- drawing custom gif format
-- the game need a game over ending
-'''
-
 #libraries
 from tkinter import *
 from sys import exit
@@ -56,7 +51,7 @@ def menu():
 
 def newGame():
 	"start a new game, get a new random word and start"
-	global guesses, letter_found, letter_guesses
+	global guesses, letter_found, letter_guesses, warning
 	#remove menu buttons and clean game screen
 	removeWidgets()
 	cleanScreen()
@@ -64,6 +59,7 @@ def newGame():
 	guesses = 0
 	letter_found = []
 	letter_guesses = []
+	warning = ""
 	#define game entry input
 	inputUser = StringVar()
 	gameEntry = Entry(gameInput, textvariable=inputUser, width=20)
@@ -116,7 +112,9 @@ def checkGuess(iu):
 			for letter in guess:
 				letter_found.append(letter)
 			warning = "You won! :)"
-			displayVictory()
+			guesses = 0
+			updatePicture()
+			displayEnd()
 		elif guess.isalpha() and len(guess) == 1: #if letter
 			#add in list letter_guesses
 			if guess in letter_guesses:
@@ -133,7 +131,10 @@ def checkGuess(iu):
 			warning = "Sorry, this guess is not correct."
 	else:
 		#no more turn avalable, end
-		warning = "You have not saved the man from hanging, game finished. :("
+		warning = "You have not saved the man from death, game finished. :("
+		updatePicture()
+		displayEnd()
+
 	
 	# print("DEBUG #3 : turn", guesses,":", guess)
 	# print("DEBUG #4 : guesses :", letter_guesses, "found :", letter_found)
@@ -144,7 +145,7 @@ def checkGuess(iu):
 def updatePicture():
 	"display picture depending number of guesses and game message about sucess, lose"
 	#change depending the number of turn
-	gameScreen.create_rectangle(WIDTH/2+70, HEIGHT/2+70, WIDTH/2-70, HEIGHT/2-70, fill=COLORS[2])
+	gameScreen.create_image(WIDTH/2, HEIGHT/2-30, image=IMAGES[guesses])
 
 def displayWord():
 	"display the Word in gameScreen, the letter/words already tried, number of turn"
@@ -289,8 +290,8 @@ def windowSetup():
 	y = root.winfo_screenheight()//2 - height//2
 	root.geometry("{}x{}+{}+{}".format(width, height, x, y))
 
-def displayVictory():
-	"display in case of victory"
+def displayEnd():
+	"display in case of victory or defeat"
 	removeWidgets()
 	butNew = Button(gameInput, text="Go Back To Menu", height=2, command=menu, width=20)
 	butNew.grid(row=1, column=1, padx=125, pady=10)
@@ -302,6 +303,17 @@ def exitRoot():
 
 if __name__ == "__main__":
 	root = Tk()
+
+	#load images
+	pic0 = PhotoImage(file="./src_hangman/pic0.gif")
+	pic1 = PhotoImage(file="./src_hangman/pic1.gif")
+	pic2 = PhotoImage(file="./src_hangman/pic2.gif")
+	pic3 = PhotoImage(file="./src_hangman/pic3.gif")
+	pic4 = PhotoImage(file="./src_hangman/pic4.gif")
+	pic5 = PhotoImage(file="./src_hangman/pic5.gif")
+	pic6 = PhotoImage(file="./src_hangman/pic6.gif")
+	pic7 = PhotoImage(file="./src_hangman/pic7.gif")
+	IMAGES = [pic0, pic1, pic2, pic3, pic4, pic5, pic6, pic7]
 
 	#define main canva and frame
 	gameScreen = Canvas(root, width=WIDTH, height=HEIGHT, bg=COLORS[0])
