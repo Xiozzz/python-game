@@ -125,7 +125,7 @@ GAMSP = [
 'm3', 'n5', 'i5', 'n2', 'i2', 'e5', 'f4', 'l3', 'j1', 'c6', 'j5', 'o2', 'i6', 'j6', 'c4', 'g4', 'g7', 'h4', 'i3', 'd5',
 'a2', 'e6', 'h5', 'j3', 'd7', 'f2', 'h3', 'c5', 'd1', 'j2', 'o5', 'm1', 'k4', 'c1', 'l4', 'e3', 'h7', 'f1', 'm7', 'c2',
 'k3', 'f3', 'j4', 'm2', 'h1', 'c3', 'h6', 'k2', 'f6', 'e4', 'k6', 'm5'
-]
+] #spaces in which cards can be moved
 
 #functions
 
@@ -219,21 +219,20 @@ def game():
 		#1. see a card from a stack if possible
 		if action in ["watch", "w", "1"]:
 			watchCoord = coordInput(6, "watch") #coordinates of the stack
-			input(watchCard(watchCoord))
+			watchCard(watchCoord)
 
 		#2. move a card
 		if action in ["move", "m", "2"]: 
 			#ask player for a coordinate like a2 or 3b, whatever or the card name (visible)
 			moveFrom = coordInput(7, "moveFrom")
 			#move the card to coordinate if possible
-			if checkMoveFrom(moveFrom):
+			if checkMoveFrom(moveFrom): #check if there is a card to move in coordinates
 				moveTo = coordInput(8, "moveTo") 
-			# print(moveFrom, moveTo)
-			#check if movement possible
-			#then cardUpdate()
+				if checkMoveTo(moveTo): #check if movement possible in coordinates
+					moveCard(moveFrom, moveTo) #move the card and cardUpdate()
 
 		#debug tools
-		#input("DEBUG MODE")
+		input("DEBUG MODE")
 			
 
 		#check if table if cells are complete and game finished, if yes, victory and break loop
@@ -298,6 +297,10 @@ def checkCoords(userInput, action):
 		if name == userInput and action == "moveFrom":
 			return True
 	
+	if name in CARDS and action == "moveTo":
+		print("Please give the coordinates where you wish to move the card.")
+		return False
+
 	return False
 
 def watchCard(coord):
@@ -363,8 +366,9 @@ def cardUpdate(CoordFrom, CoordTo):
 	# print("The index is :", cardIndex)
 	cardsPositions[cardIndex][1] = CoordTo
 
-def moveCard():
-	pass
+def moveCard(moveFrom, moveTo):
+	"move the card from position moveFrom to position moveTo"
+	print("Ok, we now move card from", moveFrom, "to", moveTo)
 
 def help():
 	"help screen"
@@ -413,24 +417,59 @@ def checkMoveFrom(given):
 		coord = given
 
 	if coord in GAMSP and tableOccupation[coord][1] > 0:
-		print("Ok, let's see if we can move the card from coordinate", coord)
-		if True: #if we can move the card
-			print("Ok, we can move.")
-			# return True
+		# print("Ok, we can move from", coord)
+		return True
+
 	else:
-		print("Sorry, this card cannot be moved.")
+		print("There is no card to be moved here.")
 
-	print("DEBUG", given, coord)
-	input()
+	# print("DEBUG", given, coord)
+	# print("DEBUG", tableOccupation[coord])
+	# input()
 
-def GAMPS():
-	"def the GAME SPACE variable for cards"
-	for posname in POSNAMES:
-		if POSNAMES[posname][:-2] == "card":
-			GAMSP.append(posname)
-			print(posname, POSNAMES[posname])
-	print(GAMSP)
-	input()
+def checkMoveTo(given):
+	"check if there is a free and valid space to move the card to given coordinates"
+
+	#given in coords normal or reversed
+	if given in POSITIONS:
+		coord = given
+	if given[::-1] in POSITIONS: #reversed ?
+		coord = given[::-1]
+
+	if coord == "a2": #exception for a2
+		print("you cannot move a card here.")
+		return False
+
+	# check if there is already a card in position
+	if coord in GAMSP:
+		if tableOccupation[coord][1] == 0:
+			print("Ok, we can move the card to coordinate", coord)
+			return True
+		else:
+			print("There is already a card in", coord)
+			return False
+
+	#redirection for cell movement
+	elif coord in CELLS:
+		print("ok you want to move a card to the cells")
+		#function checkMoveToCell() to check if the cell is the good one
+		#return true if yes, no if no
+
+	else:
+		print("you cannot move a card here")
+		return False
+
+def checkMoveToCell():
+	pass
+
+# def GAMPS():
+# 	"def the GAME SPACE variable for cards"
+# 	for posname in POSNAMES:
+# 		if POSNAMES[posname][:-2] == "card":
+# 			GAMSP.append(posname)
+# 			print(posname, POSNAMES[posname])
+# 	print(GAMSP)
+# 	input()
 
 def menu():
 	"start a new game or quit"
