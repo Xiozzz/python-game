@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 #Text based patience card game
 
+"""
+# function to check if there card in right order before to move it,  
+"""
+
 #libraries
 import os
 import sys
@@ -368,7 +372,20 @@ def cardUpdate(CoordFrom, CoordTo):
 
 def moveCard(moveFrom, moveTo):
 	"move the card from position moveFrom to position moveTo"
-	print("Ok, we now move card from", moveFrom, "to", moveTo)
+	mF = moveFrom
+	mT = moveTo
+
+	if moveFrom[::-1] in POSITIONS: #reversed ?
+		mF = moveFrom[::-1]
+	if moveTo[::-1] in POSITIONS:
+		mT = moveTo[::-1]
+
+	#update position of the card
+	tableOccupation[mF][1] -= 1
+	card = tableOccupation[mF].pop()
+	tableOccupation[mT][1] += 1
+	tableOccupation[mT].append(card)
+
 
 def help():
 	"help screen"
