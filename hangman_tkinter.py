@@ -1,5 +1,5 @@
 # -*- coding:Utf-8 -*-
-#hangman game with tkinter
+"hangman game with tkinter"
 
 #libraries
 from tkinter import *
