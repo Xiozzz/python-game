@@ -1,4 +1,5 @@
 # -*- coding:Utf-8 -*-
-"jeu de pong"
+"pong"
 
-import pygame
+from tkinter import *
+
