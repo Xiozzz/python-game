@@ -59,6 +59,7 @@ def click(event):
 				tableOccupation[space[0]] = 1
 				flag = 1
 				break
+	
 	checkVictory('player')
 
 	if flag == 1: #computer turn
@@ -116,6 +117,77 @@ def debugTable():
 
 def checkVictory(turn):
 	print(turn)
+	playerOccupation = []
+	computerOccupation = []
+
+	for letter in ALPHA:
+		for number in range(6, 0, -1):
+			position = letter+str(number)
+			if tableOccupation[position] == 1:
+				playerOccupation.append(position)
+			if tableOccupation[position] == 2:
+				computerOccupation.append(position)
+
+	if turn == "player":
+		win = 0
+		#check victory
+		for pos in playerOccupation:
+			up = 0
+			right = 0
+			diagonal = 0
+
+			posIndex = ALPHA.index(pos[0]) #index of the position in ALPHA
+			#check up of position
+			if int(pos[1]) > 3:
+				for x in range(0, 4):
+					tocheck = pos[0] + str(int(pos[1]) - x)
+					print(tocheck)
+					if tocheck in playerOccupation:
+						up += 1
+				print("DEBUG up =", up)
+				tocheck = ''
+
+			#check right of position
+			if posIndex < 4:
+				for x in range(0, 4):
+					tocheck = (ALPHA[posIndex+x] + pos[1])
+					print(tocheck)
+					if tocheck in playerOccupation:
+						right += 1
+				print("DEBUG right =", right)
+				tocheck = ''
+			
+			#check diagonal of position
+			if int(pos[1]) > 3 and posIndex < 4:
+				for x in range(0, 4):
+					tocheck = (ALPHA[posIndex+x] + str(int(pos[1]) - x))
+					print(tocheck)
+					if tocheck in playerOccupation:
+						diagonal += 1
+				print("DEBUG diagonale =", diagonal)
+				tocheck = ''
+
+			if up == 4 or right == 4 or diagonal == 4:
+				win = 1
+				break
+
+		if win == 1:
+			victory(turn)
+
+	if turn == "computer":
+		print(computerOccupation)
+		win = 0
+		#check victory
+		if win == 1:
+			victory(turn)
+				
+	#debug mode
+	input("DEBUG\n")
+
+def victory(turn):
+	"display a game victory screen"
+	print("VICTORY of", turn)				
+	exitWindow()
 
 def buildTable():
 	global spaces
