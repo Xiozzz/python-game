@@ -1,6 +1,12 @@
 # -*- coding:utf-8 -*-
 "connect 4 // puissance 4"
 
+'''
+- don't win if I play a6, b6, b5, b4, b3. why?
+- no IA yet ?
+'''
+
+
 #librairies
 from tkinter import *
 from prettytable import PrettyTable
@@ -40,19 +46,24 @@ tableOccupation = {
 def newGame():
 	"start a new game"
 	buildTable()
+	tableOccupationDefault()
 	gameScrn.bind("<Button-1>", click)
 
-
+def tableOccupationDefault():
+	"set tableOccupation to default"
+	for pos in POSITIONS:
+		tableOccupation[pos] = 0
 
 def click(event):
 	"game turn when player use click event"
+	victory = 0
 	flag = 0
 	x = event.x
 	y = event.y
 
 	for space in reversed(spaces):
 		coord = gameScrn.coords(space[1])
-		if x > coord[0] and x < coord[2]:
+		if x > coord[0] and x < coord[2] and y > 30 and y < 320:
 			if checkOccupation(space[0]):
 				#draw circle
 				drawCircle(coord, COLORS[0])
@@ -60,13 +71,13 @@ def click(event):
 				flag = 1
 				break
 	
-	checkVictory('player')
+	victory = checkVictory('player')
 
-	if flag == 1: #computer turn
+	if flag == 1 and victory == 0: #computer turn
 		spaceName = checkComputer()
 		coord = findCoord(spaceName)
 		drawCircle(coord, COLORS[1])
-		checkVictory('computer')
+		victory = checkVictory('computer')
 
 	debugTable()
 
@@ -100,7 +111,7 @@ def drawCircle(coord, color):
 	gameScrn.create_oval(coordx-15, coordy-15, coordx+15, coordy+15, fill=color)
 
 def debugTable():
-	"print the table occupation"
+	"print the table occupation in console"
 	os.system('cls')
 	table = PrettyTable(["a","b","c","d","e","f","g"])
 	table.padding_width = 2
@@ -129,68 +140,75 @@ def checkVictory(turn):
 				computerOccupation.append(position)
 
 	if turn == "player":
-		win = 0
-		#check victory
-		for pos in playerOccupation:
-			up = 0
-			right = 0
-			diagonal = 0
-
-			posIndex = ALPHA.index(pos[0]) #index of the position in ALPHA
-			#check up of position
-			if int(pos[1]) > 3:
-				for x in range(0, 4):
-					tocheck = pos[0] + str(int(pos[1]) - x)
-					print(tocheck)
-					if tocheck in playerOccupation:
-						up += 1
-				print("DEBUG up =", up)
-				tocheck = ''
-
-			#check right of position
-			if posIndex < 4:
-				for x in range(0, 4):
-					tocheck = (ALPHA[posIndex+x] + pos[1])
-					print(tocheck)
-					if tocheck in playerOccupation:
-						right += 1
-				print("DEBUG right =", right)
-				tocheck = ''
-			
-			#check diagonal of position
-			if int(pos[1]) > 3 and posIndex < 4:
-				for x in range(0, 4):
-					tocheck = (ALPHA[posIndex+x] + str(int(pos[1]) - x))
-					print(tocheck)
-					if tocheck in playerOccupation:
-						diagonal += 1
-				print("DEBUG diagonale =", diagonal)
-				tocheck = ''
-
-			if up == 4 or right == 4 or diagonal == 4:
-				win = 1
-				break
-
+		win = victoryPositions(playerOccupation)
 		if win == 1:
 			victory(turn)
+			return 1
+		else:
+			return 0
 
 	if turn == "computer":
-		print(computerOccupation)
 		win = 0
-		#check victory
+		win = victoryPositions(computerOccupation)
 		if win == 1:
 			victory(turn)
+			return 1
+		else:
+			return 0
+
+def victoryPositions(occupation):
+	"check all the victory position"
+	for pos in occupation:
+		up = 0
+		right = 0
+		diagonal = 0
+
+		posIndex = ALPHA.index(pos[0]) #index of the position in ALPHA
+		#check up of position
+		if int(pos[1]) > 3:
+			for x in range(0, 4):
+				tocheck = pos[0] + str(int(pos[1]) - x)
+				print(tocheck)
+				if tocheck in occupation:
+					up += 1
+			# print("DEBUG up =", up)
+			tocheck = ''
+
+		#check right of position
+		if posIndex < 4:
+			for x in range(0, 4):
+				tocheck = (ALPHA[posIndex+x] + pos[1])
+				print(tocheck)
+				if tocheck in occupation:
+					right += 1
+			# print("DEBUG right =", right)
+			tocheck = ''
+		
+		#check diagonal of position
+		if int(pos[1]) > 3 and posIndex < 4:
+			for x in range(0, 4):
+				tocheck = (ALPHA[posIndex+x] + str(int(pos[1]) - x))
+				print(tocheck)
+				if tocheck in occupation:
+					diagonal += 1
+			# print("DEBUG diagonale =", diagonal)
+			tocheck = ''
+
+		if up == 4 or right == 4 or diagonal == 4:
+			return 1
+		else:
+			return 0
 				
-	#debug mode
-	input("DEBUG\n")
 
 def victory(turn):
 	"display a game victory screen"
-	print("VICTORY of", turn)				
-	exitWindow()
+	print("VICTORY of", turn)	
+	gameScrn.unbind("<Button-1>")
+	gameScrn.create_text(WIDTH/2, HEIGHT/2, text=turn.upper()+" WON", font=('Arial', 30))
 
 def buildTable():
 	global spaces
+	# spaces = []
 	# main framework
 	gameScrn.create_rectangle(20, 20, WIDTH-20, HEIGHT-20, fill=COLORS[2], width=0)
 	# 6 x 7 spaces
@@ -206,7 +224,6 @@ def buildTable():
 		if c % 7 == 0:
 			x = 30
 			y += size+10
-
 
 def configWindow():
 	root.title(TITLE)
