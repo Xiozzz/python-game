@@ -2,10 +2,8 @@
 "connect 4 // puissance 4"
 
 '''
-- don't win if I play a6, b6, b5, b4, b3. why?
 - no IA yet ?
 '''
-
 
 #librairies
 from tkinter import *
@@ -112,7 +110,7 @@ def drawCircle(coord, color):
 
 def debugTable():
 	"print the table occupation in console"
-	os.system('cls')
+	# os.system('cls') # clear for linux
 	table = PrettyTable(["a","b","c","d","e","f","g"])
 	table.padding_width = 2
 	newRow = []
@@ -158,12 +156,15 @@ def checkVictory(turn):
 
 def victoryPositions(occupation):
 	"check all the victory position"
+	print("DEBUG", occupation)
 	for pos in occupation:
 		up = 0
 		right = 0
 		diagonal = 0
 
 		posIndex = ALPHA.index(pos[0]) #index of the position in ALPHA
+		print("we check :", pos, "which is in index", posIndex)
+
 		#check up of position
 		if int(pos[1]) > 3:
 			for x in range(0, 4):
@@ -171,7 +172,7 @@ def victoryPositions(occupation):
 				print(tocheck)
 				if tocheck in occupation:
 					up += 1
-			# print("DEBUG up =", up)
+			print("DEBUG check up =", up)
 			tocheck = ''
 
 		#check right of position
@@ -181,7 +182,7 @@ def victoryPositions(occupation):
 				print(tocheck)
 				if tocheck in occupation:
 					right += 1
-			# print("DEBUG right =", right)
+			print("DEBUG check right =", right)
 			tocheck = ''
 		
 		#check diagonal of position
@@ -191,13 +192,14 @@ def victoryPositions(occupation):
 				print(tocheck)
 				if tocheck in occupation:
 					diagonal += 1
-			# print("DEBUG diagonale =", diagonal)
+			print("DEBUG check diagonale =", diagonal)
 			tocheck = ''
 
 		if up == 4 or right == 4 or diagonal == 4:
 			return 1
-		else:
-			return 0
+	return 0
+
+		
 				
 
 def victory(turn):
