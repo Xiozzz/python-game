@@ -14,7 +14,7 @@ from sys import exit
 
 #datas
 
-TITLE = "Pong with Tkinter"
+TITLE = "Pong Game"
 COLORS = ["cornflower blue", "dark salmon", "royal blue", "chocolate", "firebrick", "ivory", "gainsboro"]
 WIDTH, HEIGHT = 550, 350
 TURNS = ["PLAYER", "COMPUTER"]
@@ -95,16 +95,16 @@ def displayScore():
 #Window parameters
 def configWindow():
 	"main parameters of the program"
+	root.update_idletasks()
 	root.title(TITLE)
 	root.bind('<Escape>', lambda e: exitWindow())
 	root.resizable(0,0)
-	root.update_idletasks()
 	width = root.winfo_width()
 	height = root.winfo_height()
 	x = root.winfo_screenwidth()//2 - width//2
 	y = root.winfo_screenheight()//2 - height//2
 	root.geometry("{}x{}+{}+{}".format(width, height, x, y))
-	
+
 def setGameGrid():
 	"display main grid of the program"
 	gameScrn.grid(row=1, column=1, padx=0, pady=0)
@@ -123,7 +123,7 @@ if __name__ == "__main__":
 
 	gameScrn = Canvas(root, width = WIDTH, height = HEIGHT, bg=COLORS[5], highlightthickness=0)
 	gameMenu = Frame(root, width= WIDTH, height=HEIGHT/4)
-	
+
 	butST = Button(gameMenu, text="New Game", command=newGame)
 	butQT = Button(gameMenu, text="Quit", command=exitWindow)
 
