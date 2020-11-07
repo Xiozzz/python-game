@@ -1,32 +1,18 @@
-## Free and Open Source University Curriculum
-**A path for learning computer science through web and game development**
+#THE FANTASY BOOK
 
-##Vidéo game history remake, a video game development curriculum
-
-####Tools
-* python
-* tkinter
-* pygame
-* kivy
-* inkscape
-* gimp
-* blender
-* panda3D
-
-####Projects
+## The vidéo game history by remaking it
+## L'histoire des jeux vidéos en la reconstruisant
 
 * guess a number
 * rock paper scissors
 * tic tac toe
 
-jeux textes :
-- 01 : deviner un nombre, text, tkinter
-- 02 : pierre feuille ciseau, text, tkinter
-	* ajouter des joueurs (à trois)
-- 03 : le pendu, text, tkinter
-- 04 : jeu d'aventure, text, tkinter
-- 05 : jeu de nim, text, tkinter
-- morpion, text, tkinter
+- deviner un nombre
+- pierre feuille ciseau
+- le pendu
+- jeu d'aventure
+- jeu de nim
+- morpion
 - deviner un code texte, ( fallout hack terminal) - Bagels  (inspiration pour le futur Mastermind), Deviner une combinaison texte ou chiffre
 - deviner code de couleurs, (mastermind)
 - pong
@@ -54,15 +40,22 @@ jeux textes :
 - donkey kong
 - jeu de la vie ?
 - bubble
+- dig dug
+- lode runner
 - bomberman
 - sokoban
 - sudoku
+- Donkey kong
 - Mario
 - Zelda
 - Dragon Quest/Final Fantasy
+- Ultima
 - Metroid
 - Megaman
 - docteur mario
 - castelvania
-- scrabble
+- prince of persia
+- dungeon master
+- dune 2
+- king quest/maniac mansion
 
